@@ -35,10 +35,34 @@
                                             </div>
                                         </li>
                                         <li>
-                                            <input lang="en" placeholder="Account Head" id="accountHead" type="text" style="width: 98%">
+                                            <input lang="en" placeholder="Account Head Test" id="accountHead" type="text" style="width: 98%">
                                         </li>
+                                        <table>
+                                            <tr>
+                                                <TD class="clsLabel" id="monthLabel" style="display:none">
+                                                    Select Month:
+                                                </TD>
+                                                <TD>
+                                                 <select  name="voucherMonth" style="display:none" id ="showHideDropDown" onchange="populateStartEndDate(showHideDropDown);">
+                                                    <option value="">-- None --</option>
+                                                    <option value="January">January</option>
+                                                    <option value="February">February</option>
+                                                    <option value="March">March</option>
+                                                    <option value="April">April</option>
+                                                    <option value="May">May</option>
+                                                    <option value="June">June</option>
+                                                    <option value="July">July</option>
+                                                    <option value="August">August</option>
+                                                    <option value="September">September</option>
+                                                    <option value="October">October</option>
+                                                    <option value="November">November</option>
+                                                    <option value="December">December</option>
+                                                </select>
+                                            </TD>
+                                        </tr>
+                                       </table>
                                         <li>
-                                            <input lang="en" placeholder="Expense Name" id="expenseName" style="width: 98%">
+                                            <input lang="en" placeholder="Expense Name" id="expenseName" type="text" style="width: 98%">
                                         </li>
                                         <li>
                                             <input lang="en" id="ratePerUnit" type="hidden">
@@ -63,11 +87,7 @@
                                             <p><font lang="en" face="verdana" size="1" color="green">Unit is no. of persons/Kms/meals etc.</font></p>
                                             <input lang="en" id="expUnit" type="tel" style="width: 22%" placeholder="Units" onkeyup="calculatePerUnit();">
                                             <input id="wayPointunitValue" value="" readonly="readonly" type="hidden">
-
-
-                                            <input lang="en" id="expAmt" type="text" style="width: 38%" placeholder="Amount" onkeyup="validate(); checkPerUnitExceptionStatusForBEAtLineLevel();checkAmount();">
-
-
+                                            <input lang="en" id="expAmt" type="tel" style="width: 38%" placeholder="Amount" onkeyup="validate(); checkPerUnitExceptionStatusForBEAtLineLevel();checkAmount();">
                                             <input id="currency" type="hidden" style="width: 33%">
                                             <p id="errorMsgArea"><span id="errorSpan"></span></p>
                                         </li>
@@ -103,7 +123,6 @@
                             </div>
                         </div>
                         <script>
-
                             hideEAIcons();
                             var currentMonth;
                             var currentDate;

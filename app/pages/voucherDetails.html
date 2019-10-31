@@ -129,176 +129,209 @@
             -webkit-box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
             box-shadow: 0 3rem 2.75rem 0 rgba(58, 59, 69,0.1) !important;
         }
+
+        label {
+            font-weight: 500;
+        }
     </style>
-
-    <style type="text/css">
-             /* Style the Image Used to Trigger the Modal */
-#myImg {
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-#myImg:hover {opacity: 0.7;}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(50, 50, 50, 0.73)!important;
-}
-
-/* Modal Content (Image) */
-.modal-content-img{
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-}
-
-/* Caption of Modal Image (Image Text) - Same Width as the Image */
-#caption {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-  text-align: center;
-  color: #ccc;
-  padding: 10px 0;
-  height: 150px;
-}
-
-/* Add Animation - Zoom in the Modal */
-.modal-content, #caption {
-  animation-name: zoom;
-  animation-duration: 0.6s;
-}
-
-  .modal-content-img {
-    width: 100%;
-  }
-
-  .close-img {
-    top: 55px;
-    right: 15px;
-    font-size: 30px;
-}
-
-
-.modal-footer {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    align-items: center;
-    -ms-flex-pack: end;
-    justify-content: center;
-    padding: 1rem;
-    border-top: 1px solid #dee2e6;
-    border-bottom-right-radius: .3rem;
-    border-bottom-left-radius: .3rem;
-}
-
-.modal-dialog {
-    margin: 1.75rem auto;
-}
-
-.modal-dialogsend {
-    margin: 1.75rem auto;
-    padding: 10%;
-}
-
-.modal-header {
-    background-color: #040404 !important;
-    border: 0;
-}
-
-.close {
-    right: 5px;
-    top: 6px;
-    width: 35px;
-}
-
-.modal-content {
-    background: #fff !important;
-}
-
-.modal-title {
-    margin: 0;
-    color: white;
-    font-weight: 600;
-    margin-left: 13px;
-}
-
-.modal-body {
-    position: relative;
-    padding-right: 4%;
-    padding-top: 8%;
-    padding-left: 4%;
-}
-
-.modal-backdrop {
-    position: initial;
-    background-color: transparent;
-}
-
-
-    </style>
-<body>
-<div class="container-fluid" style="background-color: white;">
-         <h1 lang="en" style="padding-top:10px">Voucher Details</h1>        
-        <div class="row" id = "voucherDetailsTab"></div>
-</div>
-
-
-<!-- The Modal -->
-<div id="myModalImg" class="modal">
-  <button type="button" class="close-img" data-dismiss="modal">&times;</button>
-  <img class="modal-content-img" id="img01" style="width: 80%;">
-  <div id="caption"></div>
-</div>
-
-<!-- The Modal -->
-                <div class="modal fade" id="myModal">
-                        <div class="modal-dialogsend">
-                                <div class="modal-content">
-                                        <!-- Modal Header -->
-                                        <div class="modal-header">
-                                          <h4 class="modal-title">Send Back Comment</h4>
-                                          <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                
-                                        <!-- Modal body -->
-                                        <div class="modal-body">
-                                          <textarea style="width:100%;" rows = "6" maxlength = "250" id="sendBackComment"></textarea>
-                                        </div>
-                                
-                                        <!-- Modal footer -->
-                                        <div class="modal-footer">
-                                          <button type="button" style="justify-content: center;" class="btn btn-primary" data-dismiss="modal" onclick="rejectVoucher();">Save</button>
-                                        </div>
+    <div class="container-fluid" style="background-color: white;">
+        <h1 style="padding-top:10px">Voucher Details</h1>
+        <div class="row" id = "tab2" style="display: none;">
+            <div class="col-md-12">
+                            <div class="card shadow">
+                                <div class="card-header" style="font-size: 15px;color: #076473;">BE-18-12-000015</div>
+                                <div class="card-body">
+                                     <div style="display: inline-flex;">
+                                        <label style="margin-left: -5px;">Business Exp</label>
+                                        <span style="margin-left:15px;">
+                                            <i class="fa fa-user"></i>
+                                            <label>Adam A</label>
+                                        </span>
+                                        <span style="margin-left:25px;">
+                                            <i class="fa fa-money"></i>
+                                           <label>300 USD</label>
+                                        </span>
                                 </div>
+                            </div>
+                            <div class="card-footer" style="padding-bottom:20px;">
+                                <span style="width: 25%;display: contents;">
+                                    <i class="fa fa-calendar" aria-hidden="true" style="margin-left: 5px;"></i>
+                                    <label><h5 style="padding-bottom: 10%;">10-Jan-2018 - 5-Feb-2018</h5></label>
+                                </span>
+                                                        <div class="table-responsive">
+                            <table class="table table-bordered tableFixHead" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Purchase Order No.: activate to sort column ascending">Expense Name
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Buyer Name: activate to sort column ascending">Date
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="PO Date: activate to sort column ascending">Amount
+                                        </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Food</td>
+                                        <td>15th Jan</td>
+                                        <td>200 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Taxi</td>
+                                        <td>28th Jan</td>
+                                        <td>20 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Food</td>
+                                        <td>2th Feb</td>
+                                        <td>80 USD</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-  <div style="display:none" id="loading_Cat">
-    <div class= "loader " style="color:teal"></div>
-</div>
-</body>
-<script>
-var modal = document.getElementById("myModalImg");
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close-img")[0];
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
+
+
+                    <div class="row" id = "tab1" style="display: none;">
+                        <div class="col-md-12">
+                            <div class="card shadow">
+                                <div class="card-header" style="font-size: 15px;color: #076473;">BE-18-12-000015</div>
+                                <div class="card-body">
+                                     <div style="display: inline-flex;">
+                                        <label style="margin-left: -5px;">Client Visit</label>
+                                        <span style="margin-left:15px;">
+                                            <i class="fa fa-user"></i>
+                                            <label>Elsa S</label>
+                                        </span>
+                                        <span style="margin-left:25px;">
+                                            <i class="fa fa-money"></i>
+                                            <label>500 USD</label>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="padding-bottom:15px;">
+                                <span style="width: 25%;display: contents;">
+                                    <i class="fa fa-calendar" aria-hidden="true" style="margin-left: 5px;"></i>
+                                    <label><h5 style="padding-bottom: 10%;">10-Dec-2018 - 20-Dec-2018</h5></label>
+                                </span>
+                                                        <div class="table-responsive">
+                            <table class="table table-bordered tableFixHead" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Purchase Order No.: activate to sort column ascending">Expense Name
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Buyer Name: activate to sort column ascending">Date
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="PO Date: activate to sort column ascending">Amount
+                                        </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   <tr>
+                                        <td>Food</td>
+                                        <td>12th Dec</td>
+                                        <td>400 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Taxi</td>
+                                        <td>17th Dec</td>
+                                        <td>50 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Food</td>
+                                        <td>20th Dec</td>
+                                        <td>50 USD</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row"  id = "tab3" style="display: none;">
+                        <div class="col-md-12">
+                            <div class="card shadow">
+                                <div class="card-header" style="font-size: 15px;color: #076473;">BE-18-12-000015</div>
+                                <div class="card-body">
+                                     <div style="display: inline-flex;">
+                                        <label style="margin-left: -5px;">Client Meeting</label>
+                                        <span style="margin-left:15px;">
+                                            <i class="fa fa-user"></i>
+                                            <label>Wilson M</label>
+                                        </span>
+                                        <span style="margin-left:25px;">
+                                            <i class="fa fa-money"></i>
+                                            <label>200 USD</label>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="padding-bottom:15px;">
+                                <span style="width: 25%;display: contents;">
+                                    <i class="fa fa-calendar" aria-hidden="true" style="margin-left: 5px;"></i>
+                                    <label><h5 style="padding-bottom: 10%;">1-June-2018 - 10-June-2018</h5></label>
+                                </span>
+                        <div class="table-responsive">
+                            <table class="table table-bordered tableFixHead" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Purchase Order No.: activate to sort column ascending">Expense Name
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Buyer Name: activate to sort column ascending">Date
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="PO Date: activate to sort column ascending">Amount
+                                        </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Food</td>
+                                        <td>1th Jun</td>
+                                        <td>100 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Taxi</td>
+                                        <td>7th Jun</td>
+                                        <td>50 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Food</td>
+                                        <td>8th June</td>
+                                        <td>50 USD</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid" style="background-color: white;">
+                <div class="col-md-12" style="text-align: center; padding-top: 20px;">
+                    <button type="submit" class="btn btn-primary" onclick="getDefaultApprovePage();">Approve</button>
+                    <button type="submit" class="btn btn-primary" onclick="goBack();">Sendback</button>
+                </div>
+            </div>
+<script type="text/javascript">
+
+    if(enableDiv == 1){
+        document.getElementById('tab1').style.display = '';
+    }
+     if(enableDiv == 2){
+        document.getElementById('tab2').style.display = '';
+    }
+     if(enableDiv == 3){
+        document.getElementById('tab3').style.display = '';
+    }
 </script>
-           

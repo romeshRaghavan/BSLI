@@ -35,16 +35,16 @@
                                             </div>
                                         </li>
                                         <li>
-                                            <input lang="en" placeholder="Expense Type" id="accountHead" type="text" style="width: 98%">
+                                            <input lang="en" placeholder="Account Head" id="accountHead" type="text" style="width: 98%">
                                         </li>
                                         <li>
                                             <input lang="en" placeholder="Expense Name" id="expenseName" type="text" style="width: 98%">
                                         </li>
 
                                         <div>
-                                            <li>
-                                                <input lang="en" id="ratePerUnit" type="hidden" style="width: 98%">
-                                            </li>
+                                        <li>
+                                            <input lang="en" id="ratePerUnit" type="hidden" style="width: 98%">
+                                        </li>
                                         </div>
 
                                         <li>
@@ -66,7 +66,7 @@
                                             <p><font lang="en" face="verdana" size="1" color="green">Unit is no. of persons/Kms/meals etc.</font></p>
                                             <input lang="en" id="expUnit" type="tel" style="width: 22%" placeholder="Units" onkeyup="calculatePerUnit();">
                                             <input id="wayPointunitValue" value="" readonly="readonly" type="hidden">
-                                            <input lang="en" id="expAmt" type="text" style="width: 38%" placeholder="Amount" onkeyup="validate(); checkPerUnitExceptionStatusForBEAtLineLevel();checkAmount();">
+                                            <input lang="en" id="expAmt" type="tel" style="width: 38%" placeholder="Amount" onkeyup="validate(); checkPerUnitExceptionStatusForBEAtLineLevel();checkAmount();">
                                             <input id="currency" type="hidden" style="width: 33%">
                                             <p id="errorMsgArea"><span id="errorSpan"></span></p>
                                         </li>
@@ -124,6 +124,7 @@
                                 currentMonth = '0' + currentMonth
                             }
 
+
                             j("#accountHead").change(function() {
                                 getExpenseNamesBasedOnAccountHead();
                             });
@@ -155,6 +156,10 @@
             <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-2">
                 <div>
                     <div id="helpimage" class="Row">
+                        <!--<div class="Cell" >
+      <font face="verdana" size="1" color="green" style=" font-size: small;color: navy;"></font>
+      <img src="images/Employee_advance_part1.png" style="height: 80%;width: 95%;text-align: -webkit-center;">
+    </div>-->
                     </div>
                     <div id="BE" class="modal-body clearfix">
                         <div class="row" style="">
@@ -179,6 +184,7 @@
             </div>
         </div>
         <script type="text/javascript">
+
             $(document).ready(function() {
                 $('#horizontalTab').easyResponsiveTabs({
                     type: 'default', //Types: default, vertical, accordion           
@@ -195,6 +201,6 @@
     </div>
 </div>
 <div style="display:none" id="loading_Cat">
-    <div class="loader " style="color:teal"></div>
+    <img src="images/loading2.gif" id="loading-image_Cat" alt="Loading...">
 </div>
 </div>

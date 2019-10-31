@@ -18,7 +18,7 @@
         <div id="horizontalTab">
             <ul class="resp-tabs-list">
                 <li lang="en" class="resp-tab-item " aria-controls="tab_item-0" role="tab" onclick="addHeader(); clearDiv();">Travel <br> Home</li>
-                <li lang="en" class="active" class="resp-tab-item resp-tab-active" aria-controls="tab_item-1" role="tab" onclick="addHeader(); clearDivRequest();"> Travel <br> Request</li>
+                <li lang="en" class="active" class="resp-tab-item resp-tab-active" aria-controls="tab_item-1" role="tab" onclick="addHeader(); clearDivRequest(); showTravelDesk();"> Travel <br> Request</li>
                 <li lang="en" class="resp-tab-item " aria-controls="tab_item-2" role="tab" onclick="addHeader(); clearDivExpense();">Travel <br> Settlement</li>
                 <li lang="en" class="resp-tab-item " aria-controls="tab_item-3" role="tab" onclick="fetchTravelSettlementExpFromMain(); clearDivSync();">Travel <br> Sync</li>
 
@@ -143,6 +143,7 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                        <div id = "categoryTdRoleIDOneWay">
                                         <p><font lang="en" face="verdana" size="2" color="green">Specify only if you require travel desk to book any of these 3:</font></p>
                                         <table class="table table-responsive">
                                             <tr>
@@ -167,6 +168,7 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                    </div>
                                     </div>
                                     <div class="tab-pane fade" id="service-two">
                                         <table class="table table-responsive">
@@ -212,6 +214,7 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                        <div id = "categoryTdRoleIDRoundTrip">
                                         <p><font lang="en" face="verdana" size="2" color="green">Specify only if you require travel desk to book any of these 3:</font></p>
                                         <table class="table table-responsive">
                                             <tr>
@@ -236,6 +239,7 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -338,7 +342,7 @@
                                         </li>
                                         <li>
                                             <p><font lang="en" face="verdana" size="1" color="green">Unit is no. of persons/Kms/meals etc.</font></p>
-                                            <input lang="en" id="expUnit" style="width: 22%" type="tel" placeholder="Units" onkeyup="">
+                                            <input lang="en" id="expUnit" style="width: 22%" type="tel" placeholder="Units" onkeyup="resetAmount();">
 
                                             <input lang="en" id="expAmt" style="width: 38%" type="tel" placeholder="Amount" onkeyup="checkEntitlementForTravelSettelment();validate();">
 
