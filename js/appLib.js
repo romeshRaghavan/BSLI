@@ -65,43 +65,19 @@
              appPageHistory.pop();
              var len = appPageHistory.length;
              var pg = appPageHistory[len - 1];
-             //console.log("pg : "+pg);
+             if (pg == "app/pages/addAnExpense.html" || pg == "app/pages/addTravelSettlement.html") {
 
-                 if (pg == "app/pages/addAnExpense.html" || pg == "app/pages/addTravelSettlement.html") {
+                 j('#mainHeader').load(headerBackBtn);
+             } else if (pg == "app/pages/category.html") {
 
-                     j('#mainHeader').load(headerBackBtn);
-                 } else if (pg == "app/pages/category.html") {
-                     j('#mainHeader').load(headerCatMsg);
-                 }else if (pg == "app/pages/businessExpenseEditPage.html") {
-                     var result = arrayRemove(appPageHistory, "app/pages/businessExpenseEditPage.html");
-                     var lenTemp = result.length;
-                     pg = result[lenTemp - 1];
-                     appPageHistory.pop();
-                     j('#mainHeader').load(headerCatMsg);
-                     j('#mainContainer').load(pg);
-                 }else if(pg == "app/pages/voucherDetails.html"){
-                    var result = arrayRemove(appPageHistory, "app/pages/voucherDetails.html");
-                     var lenTemp = result.length;
-                     pg = result[lenTemp - 1];
-                     appPageHistory.pop();
-                     j('#mainHeader').load(headerCatMsg);
-                     j('#mainContainer').load(pg);
-                 }
-                 if (!(pg == null)) {
-                     j('#mainContainer').load(pg);
-                 }
+                 j('#mainHeader').load(headerCatMsg);
+             }
+             if (!(pg == null)) {
+                 j('#mainContainer').load(pg);
+             }
          }
      }
  }
-
- //Method added for Removing element from array
-function arrayRemove(arr, value) {
-
-   return arr.filter(function(ele){
-       return ele != value;
-   });
-
-}
 
  function goBackEvent() {
      var currentUser = getUserID();
@@ -161,13 +137,13 @@ function arrayRemove(arr, value) {
      mydb.transaction(function(t) {
          //t.executeSql("CREATE TABLE IF NOT EXISTS employeeDetails (id INTEGER PRIMARY KEY ASC, firstName TEXT, lastName TEXT, gradeId INTEGER, budgetingStatus CHAR(1),unitId INTEGER, status TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS currencyMst (currencyId INTEGER PRIMARY KEY ASC, currencyName TEXT)");
-         t.executeSql("CREATE TABLE IF NOT EXISTS accountHeadMst (accountHeadId INTEGER PRIMARY KEY ASC, accHeadName TEXT)");
+         t.executeSql("CREATE TABLE IF NOT EXISTS accountHeadMst (accountHeadId INTEGER PRIMARY KEY ASC, accHeadName TEXT, isMonthlyRestricted CHAR(1))");
          t.executeSql("CREATE TABLE IF NOT EXISTS expNameMst (id INTEGER PRIMARY KEY ASC,expNameMstId INTEGER, expName TEXT, expIsFromToReq CHAR(1),accCodeId INTEGER NOT NULL,accHeadId INTEGER NOT NULL,  expIsUnitReq CHAR(1),expRatePerUnit Double, expFixedOrVariable CHAR(1), expFixedLimitAmt Double,expPerUnitActiveInative CHAR(1),isErReqd CHAR(1),limitAmountForER Double,isAttachmentReq CHAR(1),isEntiLineOrVoucherLevel CHAR(1),periodicity TEXT,isUnitPeriodic TEXT)");
-         t.executeSql("CREATE TABLE IF NOT EXISTS businessExpDetails (busExpId INTEGER PRIMARY KEY ASC, accHeadId INTEGER REFERENCES accountHeadMst(accHeadId), expNameId INTEGER REFERENCES expNameMst(expNameId),expDate DATE, expFromLoc TEXT, expToLoc TEXT, expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),isEntitlementExceeded TEXT,busExpAttachment BLOB,wayPointunitValue TEXT)");
+         t.executeSql("CREATE TABLE IF NOT EXISTS businessExpDetails (busExpId INTEGER PRIMARY KEY ASC, accHeadId INTEGER REFERENCES accountHeadMst(accHeadId), expNameId INTEGER REFERENCES expNameMst(expNameId),expDate DATE, expFromLoc TEXT, expToLoc TEXT, expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),isEntitlementExceeded TEXT,busExpAttachment BLOB,wayPointunitValue TEXT,month TEXT,year TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS walletMst (walletId INTEGER PRIMARY KEY ASC AUTOINCREMENT, walletAttachment  BLOB)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelModeMst (travelModeId INTEGER PRIMARY KEY ASC, travelModeName TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelCategoryMst (travelCategoryId INTEGER PRIMARY KEY ASC, travelCategoryName TEXT,travelModeId INTEGER)");
-         t.executeSql("CREATE TABLE IF NOT EXISTS cityTownMst (cityTownId INTEGER PRIMARY KEY ASC, cityTownName TEXT)");
+         t.executeSql("CREATE TABLE IF NOT EXISTS cityTownMst (cityTownId INTEGER PRIMARY KEY ASC, cityTownName TEXT, domesticCityTownId INTEGER)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelTypeMst (travelTypeId INTEGER PRIMARY KEY ASC, travelTypeName TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelAccountHeadMst (id INTEGER PRIMARY KEY ASC,accHeadId INTEGER, accHeadName TEXT, processId INTEGER)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelExpenseNameMst (id INTEGER PRIMARY KEY ASC,expenseNameId INTEGER, expenseName TEXT, isModeCategory char(1),accountCodeId INTEGER,accHeadId INTEGER REFERENCES travelAccountHeadMst(accHeadId))");
@@ -185,10 +161,6 @@ function arrayRemove(arr, value) {
          t.executeSql("CREATE TABLE IF NOT EXISTS perDiemTravelMst (ID INTEGER PRIMARY KEY ASC, companyId INTEGER, gradeId INTEGER, amount INTEGER, domCityTownId INTEGER, expenseHeadId INTEGER, currencyId INTEGER)");
          t.executeSql("CREATE TABLE IF NOT EXISTS profileMst (profileId INTEGER PRIMARY KEY ASC AUTOINCREMENT,empId INTEGER, profileAttachment  BLOB)");
 
-        // ****************     Approval Table      ***************** //
-
-         t.executeSql("CREATE TABLE IF NOT EXISTS BEHeader ( busExpHeaderId INTEGER ,busExpNumber TEXT,accHeadId INTEGER REFERENCES accountHeadMst(accHeadId),accHeadDesc TEXT,voucherDate DATE,startDate DATE,endDate DATE,currencyId INTEGER REFERENCES currencyMst(currencyId),currencyName TEXT,editorTotalAmt DOUBLE,vocherStatus TEXT, currentOwnerId INTEGER, currentOwnerName TEXT, rejectionComments TEXT)");
-         t.executeSql("CREATE TABLE IF NOT EXISTS BEDetails (busExpDetailId INTEGER ,busExpHeaId INTEGER , expNameId INTEGER REFERENCES expNameMst(expNameId), expName  TEXT,expDate DATE,currencyId INTEGER REFERENCES currencyMst(currencyId),currencyName TEXT, perUnit INTEGER,fromLocation TEXT,toLocation TEXT,convertedAmt DOUBLE ,expAttachment BLOB)");
 
      });
  } else {
@@ -196,83 +168,104 @@ function arrayRemove(arr, value) {
  }
 
  //function to remove a employeeDetails from the database, passed the row id as it's only parameter
+
  function saveBusinessDetails(status) {
-     exceptionMessage = '';
-     if (mydb) {
+    if (j("#accountHead").select2('data') != null) {
+     acc_head_id = j("#accountHead").select2('data').id;
+
+     checkMonthlyRestrictionForAccountHead(acc_head_id,status);
+ }
+}
+
+
+ function saveBusinessDetailsAfterValidation(status,enteredMonth,year) {
+   exceptionMessage = '';
+   if (mydb) {
          //get the values of the text inputs
-         var exp_date = document.getElementById('expDate').value;
-         var exp_from_loc = document.getElementById('expFromLoc').value;
-         var exp_to_loc = document.getElementById('expToLoc').value;
-         var exp_narration = document.getElementById('expNarration').value;
-         var exp_unit = document.getElementById('expUnit').value;
-         var way_points = document.getElementById('wayPointunitValue').value;
-         var exp_amt = document.getElementById('expAmt').value;
-         var entitlement_exceeded = exceptionStatus;
-         exceptionStatus = "N";
-         var acc_head_id;
-         var acc_head_val;
-         var exp_name_id;
-         var exp_name_val;
-         var currency_id;
-         var currency_val;
-         var file;
-         if (j("#accountHead").select2('data') != null) {
-             acc_head_id = j("#accountHead").select2('data').id;
-             acc_head_val = j("#accountHead").select2('data').name;
-         } else {
-             acc_head_id = '-1';
-         }
-         if (j("#expenseName").select2('data') != null) {
-             exp_name_id = j("#expenseName").select2('data').id;
-             exp_name_val = j("#expenseName").select2('data').name;
-         } else {
-             exp_name_id = '-1';
-         }
+       var enteredMonth = enteredMonth;
+       if(enteredMonth == undefined){
+          enteredMonth = "";
+       }
+       var year = year;
+       if(year == undefined){
+          year = "";
+       }
+       var exp_date = document.getElementById('expDate').value;
+       var exp_from_loc = document.getElementById('expFromLoc').value;
+       var exp_to_loc = document.getElementById('expToLoc').value;
+       var exp_narration = document.getElementById('expNarration').value;
+       var exp_unit = document.getElementById('expUnit').value;
+       var way_points = document.getElementById('wayPointunitValue').value;
+       var exp_amt = document.getElementById('expAmt').value;
+       var entitlement_exceeded = exceptionStatus;
+       exceptionStatus = "N";
+       var acc_head_id;
+       var acc_head_val;
+       var exp_name_id;
+       var exp_name_val;
+       var currency_id;
+       var currency_val;
+       var file;
+       if (j("#accountHead").select2('data') != null) {
+           acc_head_id = j("#accountHead").select2('data').id;
+           acc_head_val = j("#accountHead").select2('data').name;
+       } else {
+           acc_head_id = '-1';
+       }
+       if (j("#expenseName").select2('data') != null) {
+           exp_name_id = j("#expenseName").select2('data').id;
+           exp_name_val = j("#expenseName").select2('data').name;
+       } else {
+           exp_name_id = '-1';
+       }
 
-         if (j("#currency").select2('data') != null) {
-             currency_id = j("#currency").select2('data').id;
-             currency_val = j("#currency").select2('data').name;
-         } else {
-             currency_id = '-1';
-         }
+       if (j("#currency").select2('data') != null) {
+           currency_id = j("#currency").select2('data').id;
+           currency_val = j("#currency").select2('data').name;
+       } else {
+           currency_id = '-1';
+       }
 
-         if (fileTempGalleryBE == undefined || fileTempGalleryBE == "") {
+       if (fileTempGalleryBE == undefined || fileTempGalleryBE == "") {
 
-         } else {
-             file = fileTempGalleryBE;
-         }
+       } else {
+           file = fileTempGalleryBE;
+       }
 
-         if (fileTempCameraBE == undefined || fileTempCameraBE == "") {
+       if (fileTempCameraBE == undefined || fileTempCameraBE == "") {
 
-         } else {
-             file = fileTempCameraBE;
-         }
+       } else {
+           file = fileTempCameraBE;
+       }
 
-         if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file)) {
+       if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file)) {
 
-             j('#loading_Cat').show();
+           j('#loading_Cat').show();
 
-             if (file == undefined) {
-                 file = "";
-             }
+           if (file == undefined) {
+               file = "";
+           }
 
-             mydb.transaction(function(t) {
-                 t.executeSql("INSERT INTO businessExpDetails (expDate, accHeadId,expNameId,expFromLoc, expToLoc, expNarration, expUnit,expAmt,currencyId,isEntitlementExceeded,busExpAttachment,wayPointunitValue) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, acc_head_id, exp_name_id, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, currency_id, entitlement_exceeded, file, way_points]);
+           mydb.transaction(function(t) {
+               t.executeSql("INSERT INTO businessExpDetails (expDate, accHeadId,expNameId,expFromLoc, expToLoc, expNarration, expUnit,expAmt,currencyId,isEntitlementExceeded,busExpAttachment,wayPointunitValue,month,year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, acc_head_id, exp_name_id, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, currency_id, entitlement_exceeded, file, way_points, enteredMonth, year]);
 
-                 if (status == "0") {
+               if (status == "0") {
 
-                     document.getElementById('expDate').value = "";
-                     document.getElementById('expFromLoc').value = "";
-                     document.getElementById('expToLoc').value = "";
-                     document.getElementById('expNarration').value = "";
-                     document.getElementById('expUnit').value = "";
-                     document.getElementById('expAmt').value = "";
-                     document.getElementById('wayPointunitValue').value = "";
-                     smallImageBE.style.display = 'none';
-                     smallImageBE.src = "";
-                     j('#errorMsgArea').children('span').text("");
-                     j('#accountHead').select2('data', '');
-                     j('#expenseName').select2('data', '');
+                   document.getElementById('expDate').value = "";
+                   document.getElementById('expFromLoc').value = "";
+                   document.getElementById('expToLoc').value = "";
+                   document.getElementById('expNarration').value = "";
+                   document.getElementById('expUnit').value = "";
+                   document.getElementById('expAmt').value = "";
+                   document.getElementById('wayPointunitValue').value = "";
+                   document.getElementById('showHideDropDown').style.display = "none";
+                   document.getElementById('monthLabel').style.display = "none";
+                   document.getElementById('showHideDropDown').value = "";
+                   smallImageBE.style.display = 'none';
+                   smallImageBE.src = "";
+                   j('#errorMsgArea').children('span').text("");
+                   j('#accountHead').select2('data', '');
+                   j('#expenseName').select2('data', '');
                      //j('#currency').select2('data', '');
                      j('#loading_Cat').hide();
                      //j('#syncSuccessMsg').empty();
@@ -281,18 +274,35 @@ function arrayRemove(arr, value) {
                      resetImageData();
                      //createBusinessExp();
                  } else {
-                     viewBusinessExp();
-                 }
-             });
+                   viewBusinessExp();
+               }
+           });
 
-         } else {
-             return false;
-         }
-     } else {
-         alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+       }
+        else {
+           return false;
+       }
+       $(function() {
+            $('#expDate').datepicker('destroy');
+            var currMonth;
+            var currDate;
+            var currYear;
+            var date = new Date();
+            currMonth = date.getMonth();
+            currDate = date.getDate();
+            currYear = date.getFullYear();
+            $('#expDate').datepicker({
+                maxDate: new Date(currYear, currMonth, currDate)
+            });
+            var month = date.getMonth();
+            date.setMonth(month);
+            $('#expDate').datepicker("setDate", date);
+        });
+   } else {
+       alert(window.lang.translate('Database not found, your browser does not support web sql!'));
 
-     }
- }
+   }
+}
 
  function saveTravelSettleDetails(status) {
      exceptionStatus = 'N';
@@ -366,6 +376,11 @@ function arrayRemove(arr, value) {
          } else {
              file = fileTempCameraTS;
          }
+         /*if(travelRequestId != null && travelRequestId != '-1'){
+
+             var trdetails = findTravelRequestDetails(travelRequestId);
+             alert("trdetails::"+trdetails);
+         }*/
 
          if (validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id)) {
              j('#loading_Cat').show();
@@ -556,6 +571,13 @@ function arrayRemove(arr, value) {
                          j('<td></td>').attr({
                              class: ["expFixedLimitAmt", "displayNone"].join(' ')
                          }).text(row.expFixedLimitAmt).appendTo(rowss);
+                         alert("sagar4");
+                         j('<td></td>').attr({
+                             class: ["month", "displayNone"].join(' ')
+                         }).text(row.month).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["year", "displayNone"].join(' ')
+                         }).text(row.year).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -765,8 +787,11 @@ function arrayRemove(arr, value) {
                                  var stateArr = new Array();
                                  stateArr = accountHeadArray[i];
                                  var acc_head_id = stateArr.Value;
-                                 var acc_head_name = stateArr.Label;
-                                 t.executeSql("INSERT INTO accountHeadMst (accountHeadId,accHeadName) VALUES (?, ?)", [acc_head_id, acc_head_name]);
+                                 var acc_name = stateArr.Label;
+                                 var accHead = acc_name.split("$",2);
+                                 var acc_head_name = accHead[0];
+                                 var is_monthly_restricted = accHead[1];
+                                 t.executeSql("INSERT INTO accountHeadMst (accountHeadId,accHeadName,isMonthlyRestricted) VALUES (?, ?, ?)", [acc_head_id, acc_head_name, is_monthly_restricted]);
 
                              }
                          }
@@ -1077,7 +1102,8 @@ function arrayRemove(arr, value) {
                                  stateArr = cityTownJSONArray[i];
                                  var citytown_id = stateArr.CityTownId;
                                  var citytown_name = stateArr.CityTownName;
-                                 t.executeSql("INSERT INTO cityTownMst (cityTownId,cityTownName) VALUES (?, ?)", [citytown_id, citytown_name]);
+                                 var domesticCityTown_id = stateArr.DomesticCityTownId;
+                                 t.executeSql("INSERT INTO cityTownMst (cityTownId,cityTownName,domesticCityTownId) VALUES (?, ?, ?)", [citytown_id, citytown_name, domesticCityTown_id]);
 
                              }
                          }
@@ -1332,6 +1358,7 @@ function arrayRemove(arr, value) {
      window.localStorage.removeItem("localLanguage");
      window.localStorage.removeItem("mobileEC");
      window.localStorage.removeItem("MapProvider");
+     window.localStorage.removeItem("TdRole");
      dropAllTableDetails();
  }
 
@@ -1345,6 +1372,7 @@ function arrayRemove(arr, value) {
      window.localStorage.setItem("BudgetingStatus", val.BudgetingStatus);
      window.localStorage.setItem("UnitId", val.UnitId);
      window.localStorage.setItem("MapProvider", val.MapProvider);
+     window.localStorage.setItem("TdRole", val.TdRole);
 
      //For Mobile Google Map Role Start
      //End
@@ -2145,6 +2173,12 @@ function arrayRemove(arr, value) {
                          j('<td></td>').attr({
                              class: ["expFixedLimitAmt", "displayNone"].join(' ')
                          }).text(row.expFixedLimitAmt).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["month", "displayNone"].join(' ')
+                         }).text(row.month).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["year", "displayNone"].join(' ')
+                         }).text(row.year).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -2394,6 +2428,12 @@ function arrayRemove(arr, value) {
                          j('<td></td>').attr({
                              class: ["expFixedLimitAmt", "displayNone"].join(' ')
                          }).text(row.expFixedLimitAmt).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["month", "displayNone"].join(' ')
+                         }).text(row.month).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["year", "displayNone"].join(' ')
+                         }).text(row.year).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -2624,6 +2664,13 @@ function arrayRemove(arr, value) {
                          j('<td></td>').attr({
                              class: ["expFixedLimitAmt", "displayNone"].join(' ')
                          }).text(row.expFixedLimitAmt).appendTo(rowss);
+                         alert("sagar2");
+                         j('<td></td>').attr({
+                             class: ["month", "displayNone"].join(' ')
+                         }).text(row.month).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["year", "displayNone"].join(' ')
+                         }).text(row.year).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -3034,6 +3081,8 @@ function arrayRemove(arr, value) {
      var expenses = jsonToSaveEA.expenseDetails;
      var map = new Map();
      var msg = "";
+
+     console.log("expenses : " + JSON.stringify(expenses));
 
      for (var i = 0; i < expenses.length; i++) {
          //alert("expenses[i].isEntiLineOrVoucherLevel : "+expenses[i].isEntiLineOrVoucherLevel);
@@ -4087,7 +4136,7 @@ function arrayRemove(arr, value) {
 
  function updateBusinessDetails(busExpDetailId) {
 
-         var acc_head_id;
+     var acc_head_id;
      var acc_head_val;
 
      var exp_name_id;
@@ -4133,21 +4182,21 @@ function arrayRemove(arr, value) {
 
      var exp_amt = document.getElementById('expAmt').value;
 
-     /*     if (fileTempGalleryBE == undefined || fileTempGalleryBE == "") {
-          } else if(fileTempGalleryBE != ""){
-             alert("in else gal ");
-              file = fileTempGalleryBE;
-          }
+/*     if (fileTempGalleryBE == undefined || fileTempGalleryBE == "") {
+     } else if(fileTempGalleryBE != ""){
+        alert("in else gal ");
+         file = fileTempGalleryBE;
+     }
 
-          if (fileTempCameraBE == undefined || fileTempCameraBE == "") {
-          } else if(fileTempCameraBE != ""){
-             alert("in else cam ");
-              file = fileTempCameraBE;
-          }*/
+     if (fileTempCameraBE == undefined || fileTempCameraBE == "") {
+     } else if(fileTempCameraBE != ""){
+        alert("in else cam ");
+         file = fileTempCameraBE;
+     }*/
 
-     if (updateAttachment != "" && updateAttachment != undefined) {
-         file = updateAttachment;
-     } else {
+     if(updateAttachment != "" && updateAttachment != undefined){
+            file = updateAttachment;
+     }else{
          if (fileTempGalleryBE == undefined || fileTempGalleryBE == "") {
 
          } else {
@@ -4162,25 +4211,36 @@ function arrayRemove(arr, value) {
 
      }
 
-     if (file == undefined) {
+       if (file == undefined) {
          file = "";
      }
 
-     if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file)) {
+  
+      if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file)) {
 
-         if (mydb) {
-             mydb.transaction(function(t) {
+     if (mydb) {
+         mydb.transaction(function(t) {
+             console.log("accHeadId =" + acc_head_id)
+             console.log("expNameId =" + exp_name_id)
+             console.log("expDate =" + expDate)
+             console.log("fromLocation =" + exp_from_loc)
+             console.log("toLocation =" + exp_to_loc)
+             console.log("expNarration =" + exp_narration)
+             console.log("expUnit =" + exp_unit)
+             console.log("expAmt =" + exp_amt)
+             console.log("currencyId =" + currency_id)
+             console.log("busExpDetailId =" + busExpDetailId)
 
-                 t.executeSql("UPDATE businessExpDetails set accHeadId ='" + acc_head_id + "', expNameId ='" + exp_name_id + "',expDate = '" + exp_date + "'   ,expFromLoc = '" + exp_from_loc + "'   ,expToLoc = '" + exp_to_loc + "'    ,expUnit = '" + exp_unit + "'   , expAmt = '" + exp_amt + "'   ,    expNarration = '" + exp_narration + "' ,currencyId = '" + currency_id + "' ,busExpAttachment = '" + file + "' where busExpId = " + busExpDetailId + ";");
-             });
+             t.executeSql("UPDATE businessExpDetails set accHeadId ='" + acc_head_id + "', expNameId ='" + exp_name_id + "',expDate = '" + exp_date + "'   ,expFromLoc = '" + exp_from_loc + "'   ,expToLoc = '" + exp_to_loc + "'    ,expUnit = '" + exp_unit + "'   , expAmt = '" + exp_amt + "'   ,    expNarration = '" + exp_narration + "' ,currencyId = '" + currency_id + "' ,busExpAttachment = '" + file + "' where busExpId = " + busExpDetailId + ";");
+         });
 
-             alert("Record update successfully");
+         alert("Record update successfully");
 
-         } else {
-             alert("db not found, your browser does not support web sql!");
-         }
-         viewBusinessExp();
+     } else {
+         alert("db not found, your browser does not support web sql!");
      }
+     viewBusinessExp();
+      }
  }
 
  function getPrimaryExpenseId(expMstId) {
@@ -4461,6 +4521,12 @@ function arrayRemove(arr, value) {
 
  // *********************************  Travel Settelment Entitlement -- Start ******************************************//
  function checkEntitlementForTravelSettelment() {
+     var noOfUnit = document.getElementById('expUnit').value;
+     if(noOfUnit == ''){
+        alert("Please Select Units");
+        document.getElementById('expAmt').value ="";
+        return false;
+      }
      var travelExpenseReqID;
      var travelModeID;
      var travelCategoryID;
@@ -4487,12 +4553,39 @@ function arrayRemove(arr, value) {
          travelExpenseReqName = j("#travelExpenseName").select2('data').name;
      }
 
+     if(travelReqID == '' || travelReqID == undefined){
+        alert("Please Select Travel Request");
+        document.getElementById('expAmt').value ="";
+        return false;
+      }
+      if(travelModeID == '' || travelModeID == undefined){
+        alert("Please Select Travel Mode");
+        document.getElementById('expAmt').value ="";
+        return false;
+      }
+      if(travelCategoryID == '' || travelCategoryID == undefined){
+        alert("Please Select Travel Category");
+        document.getElementById('expAmt').value ="";
+        return false;
+      }
+      if(cityTownID == '' || cityTownID == undefined){
+        alert("Please Select From Location");
+        document.getElementById('expAmt').value ="";
+        return false;
+      }
+      if(travelExpenseReqID == '' || travelExpenseReqID == undefined){
+        alert("Please Select Expense Name");
+        document.getElementById('expAmt').value ="";
+        return false;
+      }
+
      if (travelReqID != 'undefined' && travelReqID != '-1') {
-         getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName);
+         getDomCityTownTypeId(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName,noOfUnit);
+        // getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName);
      }
  }
 
- function getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName) {
+ function getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName,noOfUnit,domesticCityTownId) {
 
      if (mydb) {
          mydb.transaction(function(t) {
@@ -4505,7 +4598,7 @@ function arrayRemove(arr, value) {
                          var expenseNameId = row.expenseNameId;
 
                          if (expenseNameId != "" && expenseNameId != 0) {
-                             calcuteEntitlementForTS(expenseNameId, travelReqID, travelExpenseReqID, travelModeID, travelCategoryID, cityTownID, cityTownName, travelExpenseReqName);
+                             calcuteEntitlementForTS(expenseNameId, travelReqID, travelExpenseReqID, travelModeID, travelCategoryID, cityTownID, cityTownName, travelExpenseReqName,noOfUnit,domesticCityTownId);
                          }
 
                      }
@@ -4517,23 +4610,26 @@ function arrayRemove(arr, value) {
 
  }
 
- function calcuteEntitlementForTS(expenseNameId, travelReqID, travelExpenseReqID, travelModeID, travelCategoryID, cityTownID, cityTownName, travelExpenseReqName) {
-
-     console.log("travelExpenseNameID : " + expenseNameId + "cityTownID : " + cityTownID);
+ function calcuteEntitlementForTS(expenseNameId, travelReqID, travelExpenseReqID, travelModeID, travelCategoryID, cityTownID, cityTownName, travelExpenseReqName,noOfUnit,domesticCityTownId) {
+     
+     console.log("travelExpenseNameID : " + expenseNameId + "cityTownID : " + cityTownID + "domesticCityTownId :" + domesticCityTownId);
 
      if (validateValuesForEntitlement(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID)) {
          if (mydb) {
              mydb.transaction(function(t) {
-                 t.executeSql("Select amount from perDiemTravelMst where domCityTownId = '" + cityTownID + "' and expenseHeadId ='" + expenseNameId + "'", [],
+                 t.executeSql("Select amount from perDiemTravelMst where domCityTownId = '" + domesticCityTownId + "' and expenseHeadId ='" + expenseNameId + "'", [],
                      function(transaction, results) {
                          for (i = 0; i < results.rows.length; i++) {
 
                              var row = results.rows.item(i);
                              var amount = row.amount;
                              var tsAmount = document.getElementById('expAmt').value;
+                             var totalamt = noOfUnit * tsAmount;
+                             console.log("totalamt" + totalamt);
+                             console.log("tsAmount" + tsAmount);
                              var exceptionMessage = "";
 
-                             if (tsAmount > amount) {
+                             if (totalamt > amount) {
                                  exceptionMessage = "(Exceeding Per Diem Entitlement amount defined: " + amount + " for Expense Head :  " + travelExpenseReqName + " and City/Town : " + cityTownName + ")";
                                  j('#travelErrorMsgArea').children('span').text(exceptionMessage);
                              } else {
@@ -4698,884 +4794,307 @@ function arrayRemove(arr, value) {
 
  //***************************** Profile Image -- End *******************************************************//
 
- //***************************** Agile Merging -- Start *******************************************************//
-
-
- function pastVoucherViews() {
-
-     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-     var pageRef = defaultPagePath + 'viewPastVoucher.html';
-
-
-     j(document).ready(function() {
-         j('#mainHeader').load(headerBackBtn);
-         j('#mainContainer').load(pageRef);
-     });
-     appPageHistory.push(pageRef);
-
- }
-
-
- // ******************************** View Past Voucher / For My Approval Header -- Start *********************************************//
-
- function viewVoucherHeaders(statusOfVoucher) {
-
-     enableDivBasedOnStatus = statusOfVoucher;
-
-     // For My Approval Header Page
-     if(statusOfVoucher == 'A'){                                    
-         var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-         var pageRef = defaultPagePath + 'viewApproverVouchers.html';
-         appPageHistory.push(pageRef);
-        j('#mainHeader').load(headerBackBtn);
-        j('#mainContainer').load(pageRef);
-     }
-
-     //  My Expense Pages
-
-     if(statusOfVoucher == 'F' || statusOfVoucher == 'R' || statusOfVoucher == 'P' || statusOfVoucher == 'U'){
-         var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-         var pageRef = defaultPagePath + 'viewApproverPastVouchers.html';
-         appPageHistory.push(pageRef);
-        j('#mainHeader').load(headerBackBtn);
-        j('#mainContainer').load(pageRef);
-     }
-
-
- }
-
- function syncVoucherHeader(statusOfVoucher) {
-
-     var jsonSentToSync = new Object();
-     jsonSentToSync["employeeId"] = window.localStorage.getItem("EmployeeId");
-     jsonSentToSync["processId"] = "1";
-     jsonSentToSync["vocherStatus"] = statusOfVoucher;
-
-     if (mydb) {
-         j.ajax({
-             url: window.localStorage.getItem("urlPath") + "SyncVoucherHeaders",
-             type: 'POST',
-             dataType: 'json',
-             crossDomain: true,
-             data: JSON.stringify(jsonSentToSync),
-             success: function(data) {
-
-                 mydb.transaction(function(t) {
-                     t.executeSql("DELETE FROM BEHeader");
-                 });
-
-                 if (data.Status == 'Success') {
-                     var claimExpArray = data.expenseDetails;
-
-                     mydb.transaction(function(t) {
-                         if (claimExpArray != null && claimExpArray.length > 0) {
-                             for (var i = 0; i < claimExpArray.length; i++) {
-                                 var headArray = new Array();
-                                 headArray = claimExpArray[i];
-
-                                 var busExpHeaderId = headArray.busExpHeaderId;
-                                 var busExpNumber = headArray.busExpNumber;
-                                 var accHeadId = headArray.accHeadId;
-                                 var accHeadDesc = headArray.accHeadDesc;
-                                 var voucherDate = headArray.voucherDate;
-                                 var startDate = headArray.startDate;
-                                 var endDate = headArray.endDate;
-                                 var currencyId = headArray.currencyId;
-                                 var currencyName = headArray.currencyName;
-                                 var editorTotalAmt = headArray.editorTotalAmtcurrencyName;
-                                 var vocherStatus = headArray.vocherStatus;
-                                 var currentOwnerId = headArray.currentOwnerId;
-                                 var currentOwnerName = headArray.currentOwnerName;
-                                 var rejectionComments = headArray.rejectionComments;
-
-                                 t.executeSql("INSERT INTO BEHeader (busExpHeaderId ,busExpNumber ,accHeadId ,accHeadDesc ,voucherDate ,startDate ,endDate ,currencyId ,currencyName ,editorTotalAmt ,vocherStatus , currentOwnerId, currentOwnerName, rejectionComments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [busExpHeaderId, busExpNumber, accHeadId, accHeadDesc, voucherDate, startDate, endDate, currencyId, currencyName, editorTotalAmt, vocherStatus, currentOwnerId, currentOwnerName, rejectionComments]);
-
-                             }
-                         }
-                         requestRunning = false;
-                         if (statusOfVoucher == 'F' || statusOfVoucher == 'R' || statusOfVoucher == 'P' || statusOfVoucher == 'U') {
-                             displayPastVoucherPage(data.Status);
-                         } else {
-                             displayApprovalPage(data.Status);
-                         }
-
-                     });
-
-                 } else if (data.Status == 'SUCCESS_NO_DATA') {
-                     requestRunning = false;
-                     if (statusOfVoucher == 'F' || statusOfVoucher == 'R' || statusOfVoucher == 'P' || statusOfVoucher == 'U') {
-                         displayPastVoucherPage(data.Status);
-                     } else {
-                         displayApprovalPage(data.Status);
-                     }
-                 } else {
-                     requestRunning = false;
-                     if (statusOfVoucher == 'F' || statusOfVoucher == 'R' || statusOfVoucher == 'P' || statusOfVoucher == 'U') {
-                         displayPastVoucherPage(data.Status);
-                     } else {
-                         displayApprovalPage(data.Status);
-                     }
-                 }
-
-             },
-             error: function(data) {
-                 requestRunning = false;
-                 if (statusOfVoucher == 'V') {
-                     displayPastVoucherPage(data.Status);
-                 } else {
-                     displayApprovalPage(data.Status);
-                 }
-             }
-         });
-     }
- }
-
- function displayPastVoucherPage(statusOfVoucher) {
-
-     if (statusOfVoucher == "SUCCESS_NO_DATA") {
-
-              var data = "<div style='text-align: center;'>"
-                         +"<p  style='text-align: center;'><img src = 'images/noVoucher1.png'></p>"
-                         +"<h4><b style='color: darkgrey;'>No expense available.</b></h4>"
-                         +"<div>";
-              j("#voucherHeader").append(data);
-
-     } else {
-                fetchViewForVouchersHeader();
-     }
-
- }
-
- function displayApprovalPage(statusOfVoucher) {
-
-     if (statusOfVoucher == "SUCCESS_NO_DATA") {
-        requestRunning = false;
-
-         j(document).ready(function() {
-
-               var data = "<div style='text-align: center;'>"
-                         +"<p  style='text-align: center;'><img src = 'images/noVoucher1.png'></p>"
-                         +"<h4><b style='color: darkgrey;'>No expense available.</b></h4>"
-                         +"<div>";
-              j("#voucherHeader").append(data);
-
-         });
-
-     } else {
-         requestRunning = false;
-         resetImageData();
-                         fetchViewForVouchersHeader();
-     }
- }
-
- function fetchViewForVouchersHeader() {
-     var statusForEdit = "";
-     var pendingAt = "";
-     mydb.transaction(function(t) {
-         t.executeSql('SELECT * FROM BEHeader;', [],
-             function(transaction, result) {
-                 if (result != null && result.rows != null) {
-                     j('#voucherHeader').empty();
-                     for (record = 0; record < result.rows.length; record++) {
-                         var row = result.rows.item(record);
-
-                         if (row.vocherStatus == 'R' || row.vocherStatus == 'D') {
-                             statusForEdit = 'Sent Back';
-                         } else if (row.vocherStatus == 'P') {
-                             statusForEdit = 'Pending';
-                         } else if (row.vocherStatus == 'F') {
-                             statusForEdit = 'Paid';
-                         }  else if (row.vocherStatus == 'U') {
-                             statusForEdit = 'Unpaid';
-                             pendingAt = 'Payment Desk'
-                         }
-
-                        if(pendingAt == ""){
-                            pendingAt = row.currentOwnerName;
-                        }
-
-                         var defaultCurrency  = window.localStorage.getItem("DefaultCurrencyName");
-
-                         var data =
-                             "<div class='col-md-12' onclick='fetchViewForVoucherDetails(" + row.busExpHeaderId + ");'>" 
-                             + "<div class='card shadow'>" 
-                             + "<div class='card-header' style='font-size: 15px;color: #076473;'>" 
-                             + row.busExpNumber 
-                             +"<h7 style='display: inline;'>&nbsp("+defaultCurrency+")</h7>"
-                             + "<label style = 'color:darkorange;float: right;'>" + statusForEdit + "</label></div>" 
-                             + "<div class='card-body'>" 
-                             + "<div style='display: inline-flex;'>" 
-                             + "<label>" + row.accHeadDesc + "</label>" 
-                             + "<span style='margin-left:15px;'>" 
-                             + "<i class='fa fa-user'></i>" 
-                             + "<label>&nbsp;" +pendingAt 
-                             + "</label>" + "</span>" + "<span style='margin-left:25px;'>" 
-                             + "<i class='fa fa-money'></i>" + "<label>&nbsp;" + row.editorTotalAmt + "</label>" 
-                             + "</span>" + "</div>" + "</div>" + "<div class='card-footer'>" 
-                             + "<span style='width: 25%;display: contents;'>" 
-                             + "<i class='fa fa-calendar' aria-hidden='true' style='margin-left: 5px;'></i>" 
-                             + "<label><h5>&nbsp;" + row.startDate + ' - ' + row.endDate + "</h5></label>"
-                             +"</span>" + "</span>" + "</div>" + "</div>" + "</div>" + "<br>";
-
-                         j('#voucherHeader').append(data);
-
-                     }
-                 }
-
-             });
-
-     });
- }
-
- // ******************************** View Past Voucher  / For My Approval Header -- End *********************************************//
-
-  function fetchCountForMyApproval(statusOfVoucher) {
-
-     var jsonSentToSync = new Object();
-     jsonSentToSync["employeeId"] = window.localStorage.getItem("EmployeeId");
-     jsonSentToSync["processId"] = "1";
-     jsonSentToSync["vocherStatus"] = statusOfVoucher;
-
-     j.ajax({
-         url: window.localStorage.getItem("urlPath") + "FetchCount",
-         type: 'POST',
-         dataType: 'json',
-         crossDomain: true,
-         data: JSON.stringify(jsonSentToSync),
-         success: function(data) {
-
-             if (data.Status == "Success") {
-
-                 var countForVouchers = data.VoucherCount.toString();
-                 
-                if(statusOfVoucher == 'A' && document.getElementById('count') != null){
-                 document.getElementById("count").innerHTML = countForVouchers.match(/\d+/);
-                }else{
-                     var arrayOfCount = countForVouchers.split(",");
-
-                     for(var i = 0 ; i < arrayOfCount.length ; i++){
-
-                        if(arrayOfCount[i].includes("P") && document.getElementById('pendingCount') != null){
-                            document.getElementById("pendingCount").innerHTML = arrayOfCount[i].match(/\d+/);
-                        }
-                        if(arrayOfCount[i].includes("U") && document.getElementById('approvedUnpaidCount') != null){
-                            document.getElementById("approvedUnpaidCount").innerHTML = arrayOfCount[i].match(/\d+/);
-                        }
-                         if(arrayOfCount[i].includes("F") && document.getElementById('approvedPaidCount') != null){
-                            document.getElementById("approvedPaidCount").innerHTML = arrayOfCount[i].match(/\d+/);
-                        }
-                         if(arrayOfCount[i].includes("R") && document.getElementById('sendBackCount') != null){
-                            document.getElementById("sendBackCount").innerHTML = arrayOfCount[i].match(/\d+/);
-                        }
-
-                     }
-
-                }
-
-                 requestRunning = false;
-             } else {
-                 requestRunning = false;
-             }
-         },
-         error: function(data) {
-             requestRunning = false;
-         }
-     });
-
- }
-
- function fetchViewForVoucherDetails(busExpHeaderId) {
-
-     var jsonToPopulateBEDetails = new Object();
-     jsonToPopulateBEDetails["processId"] = '1';
-     jsonToPopulateBEDetails["voucherId"] = busExpHeaderId;
-     jsonToPopulateBEDetails["employeeId"] = window.localStorage.getItem("EmployeeId");
-
-     j.ajax({
-         url: window.localStorage.getItem("urlPath") + "SyncVoucherDetails",
-         type: 'POST',
-         dataType: 'json',
-         crossDomain: true,
-         data: JSON.stringify(jsonToPopulateBEDetails),
-         success: function(data) {
-             if (data.Status == "Success") {
-                 var voucherDetailArray = data.expenseDetails;
-                 setDetailsForHeader(busExpHeaderId, voucherDetailArray);
-
-                 requestRunning = false;
-             } else {
-                 successMessage = "Error: Oops something is wrong, Please Contact System Administer";
-                 requestRunning = false;
-             }
-         },
-         error: function(data) {
-             requestRunning = false;
-         }
-     });
-
- }
-
-
- function setDetailsForHeader(busExpHeaderId, voucherDetailArray) {
-
-    var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-    var pageRef = defaultPagePath + 'voucherDetails.html';
-    
-
-    if( !appPageHistory.includes('app/pages/voucherDetails.html')){
-            appPageHistory.push(pageRef);
-    }
-
-    j(document).ready(function() {
-        j('#mainHeader').load(headerBackBtn);
-        j('#mainContainer').load(pageRef, function() {
-          fetchdetails(busExpHeaderId,voucherDetailArray);
-        });
-     });
- }
-
- function fetchdetails(busExpHeaderId, voucherDetailArray) {
-
-     try {
-
-         var detailBodyLines = "";
-
-         if (voucherDetailArray != null && voucherDetailArray.length > 0) {
-             for (var i = 0; i < voucherDetailArray.length; i++) {
-                 var detailArray = new Array();
-                 detailArray = voucherDetailArray[i];
-
-                 var attachment = "";
-
-                 var expName = detailArray.expName;
-
-                 var unit = "";
-                    if(detailArray.perUnit != null && detailArray.perUnit != 'undefined'){
-                        unit = detailArray.perUnit;
-                    }
-
-                    var narration = "";
-                    if(detailArray.narration != null && detailArray.narration != 'undefined'){
-                        narration = detailArray.narration;
-                    }
-
-                  var expenseDate = getExpenseDateFromSMS(detailArray.expDate);
-
-                 if (detailArray.attachFileName != null && detailArray.attachFileName != "") {
-                     attachment = "<td><i class='fa fa-paperclip' style='font-size:18px;color:#0f97b2;' onclick='fetchReceipt(" + detailArray.attachFileId + ")'></i></td>"
-                 } else {
-                     attachment = "<td></td>"
-                 }
-
-                 if (expName.length > 15) {
-                     expName = expName.substr(0, 12) + "..";
-                 }
-
-                 var expenseDateForDetail = getDateForDetailLine(detailArray.expDate);
-
-                     detailBody = "<tr>"+ "<td>" + expName + "</td>" 
-                                        + "<td>" + expenseDateForDetail + "</td>" 
-                                        + "<td>" + detailArray.amount + ' <h6 style=display:inline-block;>'+ detailArray.currencyName + "</h6></span></td>"
-                                        + attachment
-                                        + "<td  class='expDate displayNone'>"+expenseDate+ "</td>"    
-                                        + "<td  class='toLocation displayNone'>"+detailArray.toLocation+"</td>"
-                                        + "<td  class='fromLocation displayNone'>"+detailArray.fromLocation+"</td>"
-                                        + "<td  class='expNarration1 displayNone'>"+narration+"</td>"
-                                        + "<td  class='expAmt1 displayNone'>"+detailArray.amount+"</td>"
-                                        + "<td  class='expNameId displayNone'>"+detailArray.expNameId+"</td>"
-                                        + "<td  class='expUnit displayNone'>"+unit+"</td>"
-                                        + "<td  class='currencyId displayNone'>"+detailArray.currencyId+"</td>"
-                                        + "<td  class='accHeadId displayNone'>"+detailArray.accHeadId+"</td>"
-                                        + "<td  class='accountCodeId displayNone'>"+detailArray.accCodeId+"</td>"
-                                        + "<td  class='busExpId displayNone'>"+detailArray.busExpHeadId+"</td>"
-                                        + "<td  class='busExpDetailId displayNone'>"+detailArray.busExpDetailId+"</td>"
-                                        + "<td  class='attachFileId displayNone'>"+detailArray.attachFileId+"</td>"   
-                                        + "</tr>"
-
-                 detailBodyLines = detailBodyLines + detailBody;
-             }
-         }
-
-         setHeaderToDetail(busExpHeaderId, voucherDetailArray, detailBodyLines)
-
-     } catch (e) {
-         console.log(e);
-     }
-
- }
-
-  function getDateForDetailLine(input) {
-    // converts date from dd-MMM-yyyy to dd/mm/yyyy
-    var date = new Date(input);
-
-    return( date.getMonth() + 1 + "/" +date.getDate());
-}
-
- function setHeaderToDetail(busExpHeaderId, voucherDetailArray, detailBodyLines) {
-     var statusForEdit = "";
-     var pendingAt = "";
-     mydb.transaction(function(t) {
-
-         t.executeSql('SELECT * FROM BEHeader where busExpHeaderId = ' + busExpHeaderId, [],
-             function(transaction, result) {
-                 if (result != null && result.rows != null) {
-                     j('#voucherDetailsTab').empty();
-                     for (record = 0; record < result.rows.length; record++) {
-                         var row = result.rows.item(record);
-
-                         if (row.vocherStatus == 'R'|| row.vocherStatus == 'D') {
-                             statusForEdit = 'Sent Back';
-                         } else if (row.vocherStatus == 'P') {
-                             statusForEdit = 'Pending';
-                         } else if (row.vocherStatus == 'F') {
-                             statusForEdit = 'Paid';
-                         }  else if (row.vocherStatus == 'U') {
-                             statusForEdit = 'Unpaid';
-                             pendingAt = 'Payment Desk'
-                         }
-
-                          if(pendingAt == ""){
-                            pendingAt = row.currentOwnerName;
-                        }
-
-
-                         var buttonValue = "";
-
-                         var defaultCurrency  = window.localStorage.getItem("DefaultCurrencyName");
-
-                         var data =
-                             "<div class='col-md-12'>" 
-                             + "<div class='card shadow'>" 
-                             + "<div class='card-header' style='font-size: 15px;color: #076473;'>" 
-                             + row.busExpNumber 
-                             +"<h7 style='display: inline;'>&nbsp("+defaultCurrency+")</h7>"
-                             +"<label style = 'color:darkorange;float: right;'>" + statusForEdit + "</label></div>"
-
-                         +"<div class='card-body'>" + "<div style='display: inline-flex;'>" + "<label style='margin-left: -5px;'>" + row.accHeadDesc + "</label>" + "<span style='margin-left:15px;'>" + "<i class='fa fa-user'></i>" 
-                         + "<label>&nbsp;" + pendingAt + "</label>" + "</span>" 
-                         + "<span style='margin-left:25px;'>" 
-                         + "<i class='fa fa-money'></i>" 
-                         + "<label>&nbsp;" + row.editorTotalAmt +"</label>" 
-                         + "</span>" 
-                         + "</div>" 
-                         + "</div>" 
-                         + "<div class='card-footer' id = 'buttonsAttached' style='padding-bottom:20px;'>" 
-                         + "<span style='width: 25%;display: contents;'>" 
-                         + "<i class='fa fa-calendar' aria-hidden='true' style='margin-left: 5px;'></i>" 
-                         + "<label><h5 style='padding-bottom: 10%;'>&nbsp;" + row.startDate + ' - ' + row.endDate + "</h5></label>"
-
-                         + "</span>"
-
-                         + "<div class='table-responsive'>" 
-                         + "<table id = 'detailTab' class='table table-bordered tableFixHead' width='100%' cellspacing='0'>" 
-                         + "<thead>" 
-                         + "<tr role='row'>" 
-                         + "<th class='sorting' tabindex='0' aria-controls='dataTable' rowspan='1' colspan='1' aria-label=''>Expense Name" + "</th>" 
-                         + "<th class='sorting' tabindex='0' aria-controls='dataTable' rowspan='1' colspan='1' aria-label=''>Date" + "</th>" 
-                         + "<th class='sorting' tabindex='0' aria-controls='dataTable' rowspan='1' colspan='1' aria-label=''>Amount" + "</th>" 
-                         + "<th class='sorting' tabindex='0' aria-controls='dataTable' rowspan='1' colspan='1' aria-label=''>" + "</th>" 
-                         + "</tr>" 
-                         + "</thead>" 
-                         + "<tbody id='detailBodyId'>" + detailBodyLines + "</tbody>" 
-                         + "</table>" 
-                         + "</div>" 
-                         + "</div>" 
-                         + "</div>" 
-                         + "</div>";
-
-                         j('#voucherDetailsTab').append(data);
-
-                         if (statusForEdit == 'Sent Back' || statusForEdit == 'Draft') {
-
-                             buttonValue =   
-                                            "<br>"
-                                            +"<div style='margin-left: 2%;'><label>Sent Back Comments :</label>"
-                                            +"<br>"
-                                            +"<div style='border: 1px;background-color: #eeeeee;padding: 10px 0 10px 10px;box-sizing: border-box;width: 98%;padding-left: 10;'>"+row.rejectionComments+"</div>"
-                                            +"<div><br>"
-                                            +"<div class='col-md-12' id = 'editButton' style='text-align: center;padding-bottom: 20px;'>" + "<button type='submit' class='btn btn-primary' onclick='expPrimaryIdSB()'>Edit</button>&nbsp;" 
-                                            +"<button type='submit' id = 'sendForApproveBtn' class='btn btn-primary' onclick='approveVoucher(" + row.busExpHeaderId + ")'>Send For Approval</button>&nbsp;" + "</div>";
-
-                             j('#buttonsAttached').append(buttonValue);
-                         }
-                         if(enableDivBasedOnStatus == 'A'){
-                             buttonValue =  "<div class='col-md-12' style='text-align: center; padding-bottom: 20px;'>"
-                                            +"<button type='submit' id = 'approveBtn' class='btn btn-primary' onclick='approveVoucher("+row.busExpHeaderId+")'>Approve</button>&nbsp;"
-                                            +"<button type='button' id = 'RejectedBtn' class='btn btn-primary' data-toggle='modal' data-id="+row.busExpHeaderId+" data-target='#myModal'>Send Back</button>"
-                                            +"</div>";
-
-                             j('#buttonsAttached').append(buttonValue);
-
-                        }
-
-                        if(row.vocherStatus == 'R' || row.vocherStatus == 'D'){
-
-                            j("#detailBodyId tr").click(function() {
-                                 if (j(this).hasClass("selected")) {
-                                     j(this).removeClass('selected');
-                                     
-                                 } else {
-                                     j(this).addClass('selected');
-                                     
-                                 }
-                            });
-                        }
-
-                     }
-                 }
-
-             });
-
-     });
-
- }
-
-// ************************************** Approve Reject Voucher Start ************************************************ //
-function rejectVoucher(){
-    var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-    var pageRefSuccess = defaultPagePath + 'success.html';
-    var busExpHeaderId = j("#RejectedBtn").data('id');
-    var comment = j.trim(j("#sendBackComment").val());
-
-    if(comment != ""){
-
-        var jsonToBeSendForApproval = new Object();
-        jsonToBeSendForApproval["processId"] = '1';
-        jsonToBeSendForApproval["headerList"] = busExpHeaderId;
-        jsonToBeSendForApproval["employeeId"] = window.localStorage.getItem("EmployeeId");
-        jsonToBeSendForApproval["buttonStatus"] = "R";
-        jsonToBeSendForApproval["rejectionComment"] = comment;
-         
-        j('#loading_Cat').show();
-
-        j.ajax({
-            url: window.localStorage.getItem("urlPath") + "MobileApproveRejectService",
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: true,
-            data: JSON.stringify(jsonToBeSendForApproval),
-            success: function(data) {
-              
-                if (data.Status == "Success") {
-                    j('#loading_Cat').hide();
-                    var claimExpArray = data.expenseDetails;
-
-                    mydb.transaction(function(t) {
-                        if (claimExpArray != null && claimExpArray.length > 0) {
-                            for (var i = 0; i < claimExpArray.length; i++) {
-                                var headArray = new Array();
-                                headArray = claimExpArray[i];
-                                //console.log("headArray : "+headArray);
-
-                                var approvalMsg = headArray.message;
-                                successMessage = approvalMsg;
-
-                            }
-                        }
-
-                        if(successMessage != null && successMessage != ""){
-                            j('#loading_Cat').hide();
-                            j('#mainHeader').load(headerBackBtn);
-                            j('#mainContainer').load(pageRefSuccess);
-                        }
-                        requestRunning = false;             
-                    });
-
-                    requestRunning = false;
-                    j('#mainHeader').load(headerBackBtn);
-                    j('#mainContainer').load(pageRefSuccess);
-
-                } else {
-                     j('#loading_Cat').hide();
-                    successMessage = "Error: Oops something is wrong, Please Contact System Administer";
-                    requestRunning = false;
-                }
-            },
-            error: function(data) {
-                 j('#loading_Cat').hide();
-                requestRunning = false;
-            }
-        });
-    }else{
-        alert("Please enter send back comment.");
-    }
-}
-
- function approveVoucher(busExpHeaderId){
-    var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-    var pageRefSuccess = defaultPagePath + 'success.html';
-
-    var jsonToBeSendForApproval = new Object();
-    jsonToBeSendForApproval["processId"] = '1';
-    jsonToBeSendForApproval["headerList"] = busExpHeaderId;
-    jsonToBeSendForApproval["employeeId"] = window.localStorage.getItem("EmployeeId");
-    jsonToBeSendForApproval["buttonStatus"] = "A";
-    jsonToBeSendForApproval["rejectionComment"] = "";
-
-     
-    j('#loading_Cat').show();
-
-    j.ajax({
-        url: window.localStorage.getItem("urlPath") + "MobileApproveRejectService",
-         type: 'POST',
-         dataType: 'json',
-         crossDomain: true,
-         data: JSON.stringify(jsonToBeSendForApproval),
-         success: function(data) {
-
-             if (data.Status == "Success") {
-                j('#loading_Cat').hide();
-                var claimExpArray = data.expenseDetails;
-
-                    mydb.transaction(function(t) {
-                        if (claimExpArray != null && claimExpArray.length > 0) {
-                            for (var i = 0; i < claimExpArray.length; i++) {
-                                var headArray = new Array();
-                                headArray = claimExpArray[i];
-                                //console.log("headArray : "+headArray);
-
-                                var approvalMsg = headArray.message;
-                                successMessage = approvalMsg;
-
-                            }
-                        }
-
-                        if(successMessage != null && successMessage != ""){
-                            j('#loading_Cat').hide();
-                            j('#mainHeader').load(headerBackBtn);
-                            j('#mainContainer').load(pageRefSuccess);
-                        }
-                        requestRunning = false;             
-                    });
-
-             } else {
-                 j('#loading_Cat').hide();
-                 successMessage = "Error: Oops something is wrong, Please Contact System Administer";
-                 requestRunning = false;
-             }
-         },
-         error: function(data) {
-            j('#loading_Cat').hide();
-            successMessage = "Error: Oops something is wrong, Please Contact System Administer";
-            requestRunning = false;
-         }
-     });
-
- }
- 
- // ************************************** Approve Reject Voucher End ************************************************ //
-
- // *********************************  Business Expense Edit Send Back Vouchers(SB) -- Start ******************************************//
-
- function onloadExpenseElementSB() {
-    var jsonFindBEEditValues = JSON.parse(window.localStorage.getItem("jsonUpdateBE"));
-    //var accHeadId = jsonFindBEEditValues.accountHeadId;
-    var accHeadId = 1;
-
-     if (mydb) {
-         mydb.transaction(function(t) {
-             t.executeSql("SELECT * FROM accountHeadMst", [], getAccHeadListForBEEdit);
-             t.executeSql("SELECT * FROM currencyMst", [], getCurrencyListForBEEdit);
-             t.executeSql("SELECT * FROM expNameMst  where accHeadId=" +accHeadId, [], getExpNameListForBESBEdit);
-         });
-     } else {
-         alert('Database not found, your browser does not support web sql!');
-     }
-
- }
-
- function getExpNameListForBESBEdit(transaction, results) {
-     var i;
-     var jsonExpNameArr = [];
-     for (i = 0; i < results.rows.length; i++) {
-         var row = results.rows.item(i);
-         var jsonFindExpNameHead = new Object();
-         jsonFindExpNameHead["ExpenseID"] = row.id;
-         jsonFindExpNameHead["ExpenseName"] = row.expName;
-         jsonExpNameArr.push(jsonFindExpNameHead);
-     }
-     createExpNameDropDownForBEEdit(jsonExpNameArr);
-
-     setEditBESBJSON();
-
- }
-
- function createExpNameDropDownForBESBEEdit(jsonExpNameArr) {
-     var jsonExpArr = [];
-     if (jsonExpNameArr != null && jsonExpNameArr.length > 0) {
-         for (var i = 0; i < jsonExpNameArr.length; i++) {
-             var stateArr = new Array();
-             stateArr = jsonExpNameArr[i];
-             jsonExpArr.push({
-                 id: stateArr.ExpenseID,
-                 name: stateArr.ExpenseName
-             });
-         }
-     }
-
-     j("#expenseName").select2({
-         data: {
-             results: jsonExpArr,
-             text: 'name'
-         },
-         minimumResultsForSearch: -1,
-         placeholder: "Select Expense Name",
-         /*initSelection: function (element, callback) {
-            callback(jsonExpArr[0]);
-         },*/
-         formatResult: function(result) {
-             if (!isJsonString(result.id))
-                 result.id = JSON.stringify(result.id);
-             return result.name;
-         }
-     }).select2("val", "");
-
- }
-
- function setEditBESBJSON() {
-
-     var jsonFindBEEditValues = JSON.parse(window.localStorage.getItem("jsonUpdateBE"));
-
-     document.getElementById("expNarration").value = jsonFindBEEditValues.narration;
-
-     document.getElementById("expDate").value = jsonFindBEEditValues.expenseDate;
-
-     document.getElementById("busExpHedId").value = jsonFindBEEditValues.busExpId;
-
-     document.getElementById("busExpDetailId").value = jsonFindBEEditValues.busExpDetailId;
-
-      j("#accountHead").select2("val", jsonFindBEEditValues.accountHeadId);
-      //j("#accountHead").select2("val", 1);
-
-     if (jsonFindBEEditValues.units != null) {
-         document.getElementById("expUnit").value = jsonFindBEEditValues.units;
-     }
-
- /*    if (document.getElementById("expUnit").value == 'undefined') {
-         document.getElementById("expUnit").value = "";
-         document.getElementById("expUnit").style.display = "none";
-     }*/
-
-     document.getElementById("expAmt").value = jsonFindBEEditValues.amount;
-
-    //alert("set expense ka value "+jsonFindBEEditValues.expenseId);
-    
-    j("#expenseName").select2("val", jsonFindBEEditValues.expenseId);
-
-    j("#currency").select2("val", jsonFindBEEditValues.currencyId);
-
-     document.getElementById("expFromLoc").value = jsonFindBEEditValues.fromLocation;
-
-     document.getElementById("expToLoc").value = jsonFindBEEditValues.toLocation;
-
-     getPerUnitFromDBForEdit(jsonFindBEEditValues.expenseId);
-
-     resetImageData();
-
-    if(jsonFindBEEditValues.attachFileId != "" && jsonFindBEEditValues.attachFileId != null){
-
-            setAttachOnLoadSB(jsonFindBEEditValues.attachFileId);
-    }
-
- }
-
-function setAttachOnLoadSB(attachFileId) {
-
-     var jsonAttach = new Object();
-     jsonAttach["fileId"] = attachFileId;
-
-     j.ajax({
-         url: window.localStorage.getItem("urlPath") + "FetchAttachment",
-         type: 'POST',
-         dataType: 'json',
-         crossDomain: true,
-         data: JSON.stringify(jsonAttach),
-         success: function(data) {
-             if (data.Status == "Success") {
-
-               var attachmentData = data.attachmentData;
-
-               smallImageBE.style.display = 'block';
-               smallImageBE.src =  "data:image/png;base64," + attachmentData;
-               resetImageData();
-
-               requestRunning = false;
-             } else {
-                 requestRunning = false;
-             }
-         },
-         error: function(data) {
-             requestRunning = false;
-         }
-     });
- }
-
-function expPrimaryIdSB() {
- 
-    if (j("#detailBodyId tr.selected").hasClass("selected")) {
-        var rowCount = $('#detailBodyId tr.selected').length;
-        if (rowCount > 1) {
-            alert(window.lang.translate('Select single expense line for edit.'));
-        } else {
-            j("#detailBodyId tr.selected").each(function(index, row) {
-                getPrimaryExpenseIdSB(j(this).find('td.expNameId').text());
-            });
-        }
-    } else {
-        alert(window.lang.translate('Tap and select expenses to edit.'));
-    }
-}
-
-function getPrimaryExpenseIdSB(expMstId) {
-     if (mydb) {
+ //***************************** BSLI Changes -- Start *******************************************************//
+ function showHideMonthlyRestrictedDropDown(accountHeadId) {
+    j('#errorMsgArea').children('span').text("");
+    if (mydb) {
          //Get all the employeeDetails from the database with a select statement, set outputEmployeeDetails as the callback function for the executeSql command
          mydb.transaction(function(t) {
-             t.executeSql("SELECT id FROM expNameMst where expNameMstId=" + expMstId, [], getExpIdSB);
+             t.executeSql("SELECT * FROM accountHeadMst where accountHeadId=" + accountHeadId, [], getAccountHeadData);
          });
      } else {
          alert(window.lang.translate('Database not found, your browser does not support web sql!'));
      }
-
  }
 
- function getExpIdSB(transaction, results) {
-     var i;
-     var jsonFindExpNameHead = new Object();
+ function getAccountHeadData(transaction, results) {
+    if (results != null) {
+        var row = results.rows.item(0);
+        var result = row.isMonthlyRestricted;
+        if(result == 'Y'){
+            document.getElementById('showHideDropDown').style.display = "block";
+            document.getElementById('monthLabel').style.display = "";
+        }else{
+            document.getElementById('showHideDropDown').style.display = "none";
+            document.getElementById('monthLabel').style.display = "none";
+        }
+    }
+}
+   
+function populateStartEndDate(showHideDropDown){
+    var enteredMonth = convertMonth(showHideDropDown.value);
+    var currentDate = new Date();
+    var currentMonth = currentDate.getMonth()+ 1;
+    var currentYear = currentDate.getFullYear(); 
+    if(enteredMonth > currentDate.getMonth()){
+        currentYear = currentYear - 1;
+    }
+   
+    var selectedMonth = showHideDropDown.value.substring(0,3);
+    //start
+    var selectedMonthNumber= +enteredMonth + 1;
+    var today = new Date();
+    var currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+    var currentYear = today.getFullYear();
+    var currentMonthArray;
+    if(currentMonth == 1){
+        currentMonthArray=[1,12,11];
+    }else if(currentMonth == 2){
+        currentMonthArray=[2,1,12];
+    }else{
+        currentMonthArray=[(currentMonth-0),(currentMonth-1),(currentMonth-2)];
+    }
+    
+    var flag=currentMonthArray.includes(selectedMonthNumber);
+    if(flag == false){
+        $(function() {
+            $('#expDate').datepicker('destroy');
+            var currMonth;
+            var currDate;
+            var currYear;
+            var date = new Date();
+            currMonth = date.getMonth();
+            currDate = date.getDate();
+            currYear = date.getFullYear();
+            $('#expDate').datepicker({
+                maxDate: new Date(currYear, currMonth, currDate)
+            });
+            var month = date.getMonth();
+            date.setMonth(month);
+            $('#expDate').datepicker("setDate", date);
+        });
+        document.getElementById('showHideDropDown').value = "";
+        alert("Please select proper month.");  
+    }else{
 
+        $(function() {
+            var date = new Date();
+            var enteredMonth = convertMonth(showHideDropDown.value);
+            var day = daysInMonth(enteredMonth,currentYear);
+
+
+            $('#expDate').datepicker('destroy');
+            $('#expDate').datepicker({
+                minDate: new Date(currentYear, enteredMonth, '01'),
+                maxDate: new Date(currentYear, enteredMonth, day)
+            });
+            date.setMonth(enteredMonth);
+            $("#expDate").datepicker("setDate", date);
+
+        });
+    }
+
+}
+
+function convertMonth(month){
+        var monthVal = ""
+
+        switch(month){
+            case 'January':
+                monthVal = '0';
+                break;
+            case 'February':
+                monthVal = '1';
+                break;
+            case 'March':
+                monthVal = '2';
+                break;
+            case 'April':
+                monthVal = '3';
+                break;
+            case 'May':
+                monthVal = '4';
+                break;
+            case 'June':
+                monthVal = '5';
+                break;
+            case 'July':
+                monthVal = '6';
+                break;
+            case 'August':
+                monthVal = '7';
+                break;
+            case 'September':
+                monthVal = '8';
+                break;
+            case 'October':
+                monthVal = '9';
+                break;
+            case 'November':
+                monthVal = '10';
+                break;
+            case 'December':
+                monthVal = '11';
+                break;
+        }
+        return monthVal;
+    }
+
+    function checkMonthlyRestrictionForAccountHead(accountHeadId,status) {
+        j('#errorMsgArea').children('span').text("");
+        if (mydb) {
+         //Get all the employeeDetails from the database with a select statement, set outputEmployeeDetails as the callback function for the executeSql command
+         mydb.transaction(function(t) {
+
+             t.executeSql("SELECT * FROM accountHeadMst where accountHeadId=" + accountHeadId, [], function(transaction, results){
+                if (results != null) {
+                    var row = results.rows.item(0);
+                    var result = row.isMonthlyRestricted;
+                    if(result == 'Y'){
+                        var showHideDropDown = document.getElementById('showHideDropDown').value;
+                        if(showHideDropDown == "None" || showHideDropDown == ""){
+                        alert(window.lang.translate('Selected Month is Invalid'));
+                      }else{
+                        var exp_date = document.getElementById('expDate').value;
+                        var date = exp_date.split("/");
+                        var month = date[0];
+                        var enteredMonth = convertIntoMonthForSaveBusinessDetails(month);
+                        var year = date[2];
+                        saveBusinessDetailsAfterValidation(status,enteredMonth,year);
+                    }
+                 }else{
+                  saveBusinessDetailsAfterValidation(status,enteredMonth,year);
+              }
+           }
+       });
+     });
+ }     else {
+         alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+     }
+ }
+
+ function convertIntoMonthForSaveBusinessDetails(month){
+        var monthVal = ""
+
+        switch(month){
+            case '01':
+                monthVal = 'January';
+                break;
+            case '02':
+                monthVal = 'February';
+                break;
+            case '03':
+                monthVal = 'March';
+                break;
+            case '04':
+                monthVal = 'April';
+                break;
+            case '05':
+                monthVal = 'May';
+                break;
+            case '06':
+                monthVal = 'June';
+                break;
+            case '07':
+                monthVal = 'July';
+                break;
+            case '08':
+                monthVal = 'August';
+                break;
+            case '09':
+                monthVal = 'September';
+                break;
+            case '10':
+                monthVal = 'October';
+                break;
+            case '11':
+                monthVal = 'November';
+                break;
+            case '12':
+                monthVal = 'December';
+                break;
+        }
+        return monthVal;
+    }
+
+    function daysInMonth(iMonth, iYear){
+        return 32 - new Date(iYear, iMonth, 32).getDate();
+    }
+
+function validateTravelRequest() {
+     var map = new Map();
+
+     if (j("#source tr.selected").hasClass("selected")) {
+         j("#source tr.selected").each(function(index, row) {
+
+             var travelRequestID = j(this).find('td.travelRequestId').text();
+
+             if (map.has(travelRequestID)) {
+                 var value = map.get(travelRequestID);
+
+                 map.set(travelRequestID, travelRequestID);
+             } else {
+                 map.set(travelRequestID, travelRequestID);
+             }
+
+         });
+     }
+     if (map.size == 1) {
+         return true;
+     } else {
+         return false;
+     }
+ }
+
+ function findTravelRequestDetails(travelRequestId,jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr) {
+   if (mydb) {
+     mydb.transaction(function(t) {
+       var result = t.executeSql("select * from travelRequestDetails where travelRequestId=" + travelRequestId, [], function(transaction, results){
+        if (results != null) {
+          var row = results.rows.item(0);
+          var title = row.title;
+          var accountHeadId = row.accountHeadId;
+          trdetails = title+"$"+accountHeadId;
+          sendForApprovalTravelSettleExp(jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr, travelRequestId,trdetails);
+        }
+      });
+     });
+   } else {
+     alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+   }
+ }
+
+
+ function fetchTravelRequestDetails(transaction, results) {
+     var trdetails;
      for (i = 0; i < results.rows.length; i++) {
          var row = results.rows.item(i);
-
-         jsonFindExpNameHead["ExpenseID"] = row.id;
-
-         updateDetailLine(row.id);
+         var title = row.title;
+         var accountHeadId = row.accountHeadId;
+         trdetails = title+"$"+accountHeadId;
      }
+     return trdetails;
  }
 
- function getPrimaryExpenseIdSBAndUpdate(busExpDetailId) {
-    //alert("1 : "+busExpDetailId.value);
-    var exp_name_id;
-     if (j("#expenseName").select2('data') != null) {
-         exp_name_id = j("#expenseName").select2('data').id;
-         exp_name_val = j("#expenseName").select2('data').name;
-     } else {
-         exp_name_id = '-1';
-     }
+ function deleteSelectedTravelSettDetails(travelRequestID) {
+     mydb.transaction(function(t) {
+         t.executeSql("DELETE FROM travelSettleExpDetails WHERE travelRequestId=?", [travelRequestID]);
+     });
+ }
+ function deleteSelectedTravelRequestFromTravelRequestDetails(travelRequestID) {
+     mydb.transaction(function(t) {
+         t.executeSql("DELETE FROM travelRequestDetails WHERE travelRequestId=?", [travelRequestID]);
+     });
+ }
 
+ function getDomCityTownTypeId(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName,noOfUnit) {
+  
      if (mydb) {
-         
          mydb.transaction(function(t) {
-             t.executeSql("SELECT expNameMstId FROM expNameMst where id=" + exp_name_id, [], function (transaction, results){
+             t.executeSql("SELECT * FROM cityTownMst where cityTownId=" + cityTownID, [],
+                 function(transaction, results) {
 
-                var i;
-                var jsonFindExpNameHead = new Object();
-                 for (i = 0; i < results.rows.length; i++) {
-                    var row = results.rows.item(i);
+                     for (i = 0; i < results.rows.length; i++) {
 
-                    var  expenseIdNew = row.expNameMstId;
-                           
-                    updateBusinessDetailsSB(busExpDetailId,expenseIdNew);
-                 }
-             }, null);
+                         var row = results.rows.item(i);
+                         var domesticCityTownId = row.domesticCityTownId;
+
+                         if (domesticCityTownId != "" && domesticCityTownId != 0) {
+                             getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName,noOfUnit,domesticCityTownId);
+                         }
+
+                     }
+                 });
          });
      } else {
          alert(window.lang.translate('Database not found, your browser does not support web sql!'));
@@ -5583,312 +5102,9 @@ function getPrimaryExpenseIdSB(expMstId) {
 
  }
 
- function updateBusinessDetailsSB(busExpDetailId,expenseIdNew) {
-
-     var acc_head_id;
-     var acc_head_val;
-
-     var exp_name_id;
-     var exp_name_val;
-
-     var currency_id;
-     var currency_val;
-
-     var file;
-
-     var busExpDetailId = busExpDetailId.value;
-
-     if (j("#accountHead").select2('data') != null) {
-         acc_head_id = j("#accountHead").select2('data').id;
-         acc_head_val = j("#accountHead").select2('data').name;
-     } else {
-         acc_head_id = '-1';
-     }
-
-     if (j("#expenseName").select2('data') != null) {
-         exp_name_id = j("#expenseName").select2('data').id;
-         exp_name_val = j("#expenseName").select2('data').name;
-     } else {
-         exp_name_id = '-1';
-     }
-
-     if (j("#currency").select2('data') != null) {
-         currency_id = j("#currency").select2('data').id;
-         currency_val = j("#currency").select2('data').name;
-     } else {
-         currency_id = '-1';
-     }
-
-     var exp_date = document.getElementById('expDate').value;
-
-     var exp_from_loc = document.getElementById('expFromLoc').value;
-
-     var exp_to_loc = document.getElementById('expToLoc').value;
-
-     var exp_narration = document.getElementById('expNarration').value;
-
-     var exp_unit = document.getElementById('expUnit').value;
-
-     var exp_amt = document.getElementById('expAmt').value;
-
-     if(updateAttachment != "" && updateAttachment != undefined){
-            file = updateAttachment;
-     }else{
-         if (fileTempGalleryBE == undefined || fileTempGalleryBE == "") {
-
-         } else {
-             file = fileTempGalleryBE;
-         }
-
-         if (fileTempCameraBE == undefined || fileTempCameraBE == "") {
-
-         } else {
-             file = fileTempCameraBE;
-         }
-
-     }
-
-     if (file == undefined) {
-         file = "";
-     }
-
-  
-      if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file)) {
-
-        var jsonBeDetail = new Object();
-        jsonBeDetail["expenseDate"] = exp_date;
-        jsonBeDetail["fromLocation"] = exp_from_loc;
-        jsonBeDetail["toLocation"] = exp_to_loc;
-        jsonBeDetail["narration"] = exp_narration;
-        jsonBeDetail["units"] = exp_unit;
-        jsonBeDetail["expenseId"] = expenseIdNew;
-        jsonBeDetail["expenseName"] = exp_name_val;
-        jsonBeDetail["amount"] = exp_amt;
-        jsonBeDetail["currencyId"] = currency_id;
-        jsonBeDetail["businessExpDetId"] = busExpDetailId;
-        var data = file.replace(/data:image\/(png|jpg|jpeg);base64,/, '');
-        jsonBeDetail["imageAttach"] = data;
-
-        var pageRefSuccess = defaultPagePath + 'success.html';
-        var pageRefFailure = defaultPagePath + 'failure.html';
-        //console.log("updateDetailLine : " + JSON.stringify(jsonBeDetail));
-        //alert("3");
-
-        callUpdateDetailServiceForBESB(jsonBeDetail, pageRefSuccess, pageRefFailure);
-      }
- }
-
- function callUpdateDetailServiceForBESB(jsonBeDetail, pageRefSuccess, pageRefFailure){
-    updateExpDetailLIne(jsonBeDetail,pageRefSuccess,pageRefFailure);
- }
-
- function updateExpDetailLIne(jsonBeDetail, pageRefSuccess, pageRefFailure) {
-    //alert("4");
-     //j('#loading_Cat').show();
-     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-    
-     j.ajax({
-         url: window.localStorage.getItem("urlPath") + "UpdateBusinessExpenseDetailLine",
-         type: 'POST',
-         dataType: 'json',
-         crossDomain: true,
-         data: JSON.stringify(jsonBeDetail),
-         success: function(data) {
-            //alert("5 : "+data.Status);
-             if (data.Status == "Success") {
-                 if (data.hasOwnProperty('DelayStatus')) {
-                     setDelayMessage(data, jsonToSaveBE, busExpDetailsArr);
-                     j('#loading_Cat').hide();
-                 } else {
-                     successMessage = "Expense Line Updated Successfully";
-                     
-                     requestRunning = false;
-                     j('#loading_Cat').hide();
-                     j('#mainHeader').load(headerBackBtn);
-                     j('#mainContainer').load(pageRefSuccess);
-                     // appPageHistory.push(pageRef);
-                 }
-             } else if (data.Status == "Failure") {
-                 successMessage = data.Message;
-                 requestRunning = false;
-                 j('#loading_Cat').hide();
-                 j('#mainHeader').load(headerBackBtn);
-                 j('#mainContainer').load(pageRefFailure);
-             } else {
-                 j('#loading_Cat').hide();
-                 successMessage = "Oops!! Something went wrong. Please contact system administrator.";
-                 requestRunning = false;
-                 j('#mainHeader').load(headerBackBtn);
-                 j('#mainContainer').load(pageRefFailure);
-             }
-         },
-         error: function(data) {
-             j('#loading_Cat').hide();
-             requestRunning = false;
-             alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
-         }
-     });
- }
-
- function goBackSB(expHeaderId) {
-     var currentUser = getUserID();
-     var loginPath = defaultPagePath + 'loginPage.html';
-     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-     var headerCatMsg = defaultPagePath + 'categoryMsgPage.html';
-
-     if (currentUser == '') {
-         j('#mainContainer').load(loginPath);
-     } else {
-         //To check if the page that needs to be displayed is login page. So 'historylength-2'
-         var historylength = appPageHistory.length;
-         var goToPage = appPageHistory[historylength - 2];
-
-         if (goToPage !== null && goToPage == loginPath) {
-             return 0;
-         } else {
-             appPageHistory.pop();
-             var len = appPageHistory.length;
-             var pg = appPageHistory[len - 1];
-
-             //alert("new appPageHistory : "+appPageHistory);
-
-            j('#mainContainer').load(pg, function() {
-                     fetchViewForVoucherDetails(expHeaderId);
-            });
-                 
-            if (!(pg == null)) {
-                     j('#mainContainer').load(pg);
-            }
-         }
-     }
+ function resetAmount(){
+   document.getElementById('expAmt').value ="";
  }
 
 
-
-
-// *********************************  Business Expense Edit Send Back Vouchers(SB) -- End ******************************************//
-
- function updateDetailLine(expPrimaryId){
-
- j(document).ready(function() {
-
-
-    j("#detailTab tr").click(function() {
-                         //headerOprationBtn = defaultPagePath + 'voucherDetails.html';
-                         if (j(this).hasClass("selected")) {
-                             var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-                             j(this).removeClass('selected');
-                             j('#mainHeader').load(headerBackBtn);
-                         } else {
-                                // j('#mainHeader').load(headerOprationBtn);
-                                 j(this).addClass('selected');
-                             
-                         }
-                     });
-
-
-                if (j("#detailTab tr.selected").hasClass("selected")) {
-                    j("#detailTab tr.selected").each(function(index, row) {
-        
-                    var busExpDetailId = j(this).find('td.busExpDetailId').text();
-                    var jsonUpdateBE = new Object();
-                    var expDate = j(this).find('td.expDate').text();
-                    var expenseDate = expDate;
-
-                    jsonUpdateBE["busExpId"] = j(this).find('td.busExpId').text();
-                    jsonUpdateBE["busExpDetailId"] = busExpDetailId;
-                    jsonUpdateBE["expenseDate"] = expenseDate;
-                    
-                    jsonUpdateBE["expenseId"] = expPrimaryId;
-                    jsonUpdateBE["ExpenseName"] = j(this).find('td.expName').text();
-                    jsonUpdateBE["fromLocation"] = j(this).find('td.fromLocation').text();
-                    jsonUpdateBE["toLocation"] = j(this).find('td.toLocation').text();
-
-                    jsonUpdateBE["narration"] = j(this).find('td.expNarration1').text();
-                    jsonUpdateBE["accountHeadId"] = j(this).find('td.accHeadId').text();
-                    jsonUpdateBE["accountCodeId"] = j(this).find('td.accountCodeId').text();
-
-                    if (j(this).find('td.expUnit').text() != "") {
-                        jsonUpdateBE["units"] = j(this).find('td.expUnit').text();
-                    }
-                    jsonUpdateBE["wayPoint"] = j(this).find('td.wayPoint').text();
-                    jsonUpdateBE["amount"] = j(this).find('td.expAmt1').text();
-                    jsonUpdateBE["currencyId"] = j(this).find('td.currencyId').text();
-                    jsonUpdateBE["perUnitException"] = j(this).find('td.isEntitlementExceeded').text();
-
-/*                    var dataURL = j(this).find('td.busAttachment').text();
-                    var attachmentFileId = j(this).find('td.attachFileId').text();
-
-                    //For IOS image save
-                    //var data = dataURL.replace(/data:image\/(png|jpg|jpeg);base64,/, '');
-
-                    //For Android image save
-                    var data = dataURL.replace(/data:base64,/, '');
-
-                    jsonUpdateBE["imageAttach"] = data;*/
-
-                    jsonUpdateBE["attachFileId"] = j(this).find('td.attachFileId').text();
-
-
-                    localStorage.setItem("jsonUpdateBE", JSON.stringify(jsonUpdateBE));
-
-                    //console.log(JSON.stringify(jsonUpdateBE));
-
-                    displayUpdateDetailPage();
-
-                    });
-                } else {
-                    alert(window.lang.translate('Tap and select expense to edit.'));
-                }
-
-      });
- }
-
-
- function displayUpdateDetailPage() {
-
-     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
-     var pageRef = defaultPagePath + 'businessExpenseSendBackEditPage.html';
-     j(document).ready(function() {
-         j('#mainHeader').load(headerBackBtn);
-         j('#mainContainer').load(pageRef);
-     });
-     appPageHistory.push(pageRef);
-
- }
-
- function fetchReceipt(attachFileId) {
-
-     var jsonToBeSendForApproval = new Object();
-     jsonToBeSendForApproval["fileId"] = attachFileId;
-
-     j.ajax({
-         url: window.localStorage.getItem("urlPath") + "FetchAttachment",
-         type: 'POST',
-         dataType: 'json',
-         crossDomain: true,
-         data: JSON.stringify(jsonToBeSendForApproval),
-         success: function(data) {
-             if (data.Status == "Success") {
-
-                 var attachmentData = data.attachmentData;
-
-                 if (document.getElementById("img01") != null) {
-                     document.getElementById("img01").src = "data:image/png;base64," + attachmentData;
-                 }
-
-                 var modal = document.getElementById("myModalImg");
-                 modal.style.display = "block";
-
-                 requestRunning = false;
-             } else {
-                 requestRunning = false;
-             }
-         },
-         error: function(data) {
-             requestRunning = false;
-         }
-     });
-
- }
-  //***************************** Agile Merging -- End *******************************************************//
+ //***************************** BSLI Changes -- End *******************************************************//

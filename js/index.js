@@ -2,8 +2,8 @@ var j = jQuery.noConflict();
 var defaultPagePath = 'app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
-//var WebServicePath ='http://1.255.255.99:8681/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath ='http://1.255.255.113:8081/NexstepWebService/mobileLinkResolver.service';
+//var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='http://1.255.255.95:8080/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath = 'http://1.255.255.98:8083/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
@@ -37,10 +37,8 @@ var filtersStr = "";
 var fromLocationWayPoint = "";
 var toLocationWayPoint = "";
 var profileImg = "";
-var enableDivBasedOnStatus = ""; // For Past Voucher = 'V' and For my Approval = 'A'
+var enableDiv = "";  // Temporary for demo purpose
 var updateAttachment = ""; // For BE Edit
-var MOBILE_APP_VERSION = "12.2";
-var MOBILE_APP_NAME = "Turbo Mobile App";
 
 j(document).ready(function() {
     document.addEventListener("deviceready", loaded, false);
@@ -139,8 +137,8 @@ function commanLogin() {
     var domainName = userNameValue.split('@')[1];
     var jsonToDomainNameSend = new Object();
     jsonToDomainNameSend["userName"] = domainName;
-    jsonToDomainNameSend["mobilePlatform"] = device.platform;
-    //jsonToDomainNameSend["mobilePlatform"] = "Android";
+    //jsonToDomainNameSend["mobilePlatform"] = device.platform;
+    jsonToDomainNameSend["mobilePlatform"] = "Android";
     jsonToDomainNameSend["appType"] = "NEXGEN_EXPENZING_TNE_APP";
     //var res=JSON.stringify(jsonToDomainNameSend);
     var requestPath = WebServicePath;
@@ -425,7 +423,6 @@ function sendForApprovalBusinessDetails(jsonBEArr, busExpDetailsArr, accountHead
     jsonToSaveBE["accountHeadId"] = accountHeadID;
     jsonToSaveBE["ProcessStatus"] = "1";
     jsonToSaveBE["title"] = window.localStorage.getItem("FirstName") + "/" + jsonToSaveBE["startDate"] + " to " + jsonToSaveBE["endDate"];
-    jsonToSaveBE["gradeId"] = window.localStorage.getItem("GradeID");
 
     var pageRefSuccess = defaultPagePath + 'success.html';
     var pageRefFailure = defaultPagePath + 'failure.html';
@@ -1299,6 +1296,11 @@ function resetOneTrip() {
     document.getElementById("selectDate_One").style.borderColor = "#cccccc";
     document.getElementById("selectDate_Two").style.borderColor = "#cccccc";
     document.getElementById("selectDate_Three").style.borderColor = "#cccccc";
+    if (window.localStorage.getItem("TdRole") == "true") {
+        document.getElementById('categoryTdRoleIDRoundTrip').style.display = "block";
+    } else {
+        document.getElementById('categoryTdRoleIDRoundTrip').style.display = "none";
+    }
 }
 
 function resetRoundTrip() {
@@ -1320,6 +1322,11 @@ function resetRoundTrip() {
     document.getElementById("selectDate_One").style.borderColor = "#cccccc";
     document.getElementById("selectDate_Two").style.borderColor = "#cccccc";
     document.getElementById("selectDate_Three").style.borderColor = "#cccccc";
+    if (window.localStorage.getItem("TdRole") == "true") {
+        document.getElementById('categoryTdRoleIDOneWay').style.display = "block";
+    } else {
+        document.getElementById('categoryTdRoleIDOneWay').style.display = "none";
+    }
 }
 
 function onloadTimePicker() {
@@ -1351,6 +1358,7 @@ function getCurrencyOnRequestNoChange() {
 
 function getExpenseNamesBasedOnAccountHead() {
     var accountHeadID = j("#accountHead").select2('data').id;
+    showHideMonthlyRestrictedDropDown(accountHeadID);
     getExpenseNamesfromDB(accountHeadID);
 }
 
@@ -2065,6 +2073,103 @@ function oprationONTravelSettlementExp() {
             alert(window.lang.translate('Tap and select Expenses to delete.'));
         }
     });
+
+    j('#sendTS').on('click', function(e) {
+        if (requestRunning) {
+            return;
+        }
+        var jsonTravelSettlementDetailsArr = [];
+        var travelSettleExpDetailsArr = [];
+       // minExpenseClaimDate = new Object;
+        travelSettlementDates = new Object;
+        if (j("#source tr.selected").hasClass("selected")) {
+            j("#source tr.selected").each(function(index, row) {
+
+                var travelSettleDetailId = j(this).find('td.tsExpId').text();
+                var jsonFindTS = new Object();
+                var expDate = j(this).find('td.expDate1').text();
+                var expenseDate = expDate;
+                var currentDate = new Date(expenseDate);
+            //get Start Date
+            if (!travelSettlementDates.hasOwnProperty('minInDateFormat')) {
+                travelSettlementDates["minInDateFormat"] = currentDate;
+                travelSettlementDates["minInStringFormat"] = expenseDate;
+            } else {
+                if (travelSettlementDates.minInDateFormat > currentDate) {
+                    travelSettlementDates["minInDateFormat"] = currentDate;
+                    travelSettlementDates["minInStringFormat"] = expenseDate;
+                }
+            }
+            //get End Date
+            if (!travelSettlementDates.hasOwnProperty('maxInDateFormat')) {
+                travelSettlementDates["maxInDateFormat"] = currentDate;
+                travelSettlementDates["maxInStringFormat"] = expenseDate;
+            } else {
+                if (travelSettlementDates.maxInDateFormat < currentDate) {
+                    travelSettlementDates["maxInDateFormat"] = currentDate;
+                    travelSettlementDates["maxInStringFormat"] = expenseDate;
+                }
+            }
+
+            jsonFindTS["expenseDate"] = expenseDate;
+            //get Account Head
+            var currenttravelRequestID = j(this).find('td.travelRequestId').text();
+            if (validateTravelRequest() == true) {
+                currenttravelRequestIDToBeSent = currenttravelRequestID
+
+                var travelSettleDetailId = j(this).find('td.tsExpId').text();
+                var jsonFindTS = new Object();
+                var expDate = j(this).find('td.expDate1').text();
+
+                var expenseDate = expDate;
+
+                jsonFindTS["expenseDate"] = expenseDate;
+                jsonFindTS["travelRequestId"] = j(this).find('td.travelRequestId').text();
+                jsonFindTS["accountCodeId"] = j(this).find('td.accountCodeId').text();
+                jsonFindTS["expenseId"] = j(this).find('td.expNameId').text();
+                jsonFindTS["ExpenseName"] = j(this).find('td.expName').text();
+                jsonFindTS["travelModeId"] = j(this).find('td.modeId').text();
+                jsonFindTS["travelCategoryId"] = j(this).find('td.categoryId').text();
+                jsonFindTS["cityTownId"] = j(this).find('td.fromcityTownId').text();
+                jsonFindTS["isModeCategory"] = j(this).find('td.isModeCategory').text();
+                jsonFindTS["narration"] = j(this).find('td.expNarration1').text();
+                jsonFindTS["units"] = j(this).find('td.expUnit').text();
+                jsonFindTS["amount"] = j(this).find('td.expAmt1').text();
+                jsonFindTS["currencyId"] = j(this).find('td.currencyId').text();
+
+                var dataURL = j(this).find('td.tsExpAttachment').text();
+                //For IOS image save
+                var data = dataURL.replace(/data:image\/(png|jpg|jpeg);base64,/, '');
+
+                //For Android image save
+                //var data = dataURL.replace(/data:base64,/, '');
+
+                jsonFindTS["imageAttach"] = data;
+
+                jsonTravelSettlementDetailsArr.push(jsonFindTS);
+
+                travelSettleExpDetailsArr.push(travelSettleDetailId);
+                requestRunning = true;
+            }else{
+
+             if (exceptionMessage == '') {
+                exceptionMessage = "Selected expenses should be mapped under Single Travel Request."
+                requestRunning = false;
+                currenttravelRequestIDToBeSent = "";
+                alert(exceptionMessage);
+            }
+
+        }
+    });
+            if (travelSettleExpDetailsArr.length > 0 && currenttravelRequestIDToBeSent!= "") {
+                var trdetails = findTravelRequestDetails(currenttravelRequestIDToBeSent,jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr);
+                //sendForApprovalTravelSettleExp(jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr, currenttravelRequestIDToBeSent);
+            }
+        }else {
+            requestRunning = false;
+            alert(window.lang.translate('Tap and select Expenses to send for Approval with server.'));
+        }
+    });
 }
 
 function loaded() {
@@ -2074,8 +2179,6 @@ function loaded() {
 
 function onPhotoDataSuccess(imageData) {
     resetImageData();
-    resetUpdateImage();
-    
     if (voucherType == 'wallet') {
         smallImageWallet.style.display = 'block';
         //document.getElementById('imageWallet').files[0] = "data:image/jpeg;base64," + imageData;
@@ -2254,12 +2357,10 @@ function hideTRIcons() {
 }
 
 function hideBusinessExpense() {
-       if (document.getElementById('businessExpenseTab') != null) {
-        if (window.localStorage.getItem("mobileEC") == "true") {
-            document.getElementById('businessExpenseTab').style.display = "block";
-        } else {
-            document.getElementById('businessExpenseTab').style.display = "none";
-        }
+    if (window.localStorage.getItem("mobileEC") == "true") {
+        document.getElementById('businessExpenseTab').style.display = "block";
+    } else {
+        document.getElementById('businessExpenseTab').style.display = "none";
     }
 }
 
@@ -3048,6 +3149,8 @@ function submitBEWithEA() {
     var busExpDetailsArr = [];
     var jsonEmplAdvanceArr = [];
     var emplAdvanceDetailsArr = [];
+    var month;
+    var year;
     expenseClaimDates = new Object;
     if (requestRunning) {
         return;
@@ -3120,6 +3223,8 @@ function submitBEWithEA() {
 
                 jsonFindBE["isEntiLineOrVoucherLevel"] = j(this).find('td.isEntiLineOrVoucherLevel').text();
                 jsonFindBE["expFixedLimitAmt"] = j(this).find('td.expFixedLimitAmt').text();
+                month = j(this).find('td.month').text();
+                year = j(this).find('td.year').text();
 
                 jsonFindBE["imageAttach"] = data;
 
@@ -3156,7 +3261,7 @@ function submitBEWithEA() {
         }
 
         if (accountHeadIdToBeSent != "" && busExpDetailsArr.length > 0) {
-            sendForApprovalBusinessDetailsWithEa(jsonExpenseDetailsArr, jsonEmplAdvanceArr, busExpDetailsArr, emplAdvanceDetailsArr, accountHeadIdToBeSent);
+            sendForApprovalBusinessDetailsWithEa(jsonExpenseDetailsArr, jsonEmplAdvanceArr, busExpDetailsArr, emplAdvanceDetailsArr, accountHeadIdToBeSent, month, year);
         }
     } else {
         alert(window.lang.translate('Tap and select Expenses to send for Approval with server.'));
@@ -3164,7 +3269,7 @@ function submitBEWithEA() {
 
 }
 
-function sendForApprovalBusinessDetailsWithEa(jsonBEArr, jsonEAArr, busExpDetailsArr, empAdvArr, accountHeadID) {
+function sendForApprovalBusinessDetailsWithEa(jsonBEArr, jsonEAArr, busExpDetailsArr, empAdvArr, accountHeadID, month, year) {
     var jsonToSaveBE = new Object();
     var totalAmount = 0;
     var unsetAdvAmount = 0;
@@ -3189,6 +3294,8 @@ function sendForApprovalBusinessDetailsWithEa(jsonBEArr, jsonEAArr, busExpDetail
     jsonToSaveBE["BudgetingStatus"] = window.localStorage.getItem("BudgetingStatus");
     jsonToSaveBE["accountHeadId"] = accountHeadID;
     jsonToSaveBE["ProcessStatus"] = "1";
+    jsonToSaveBE["month"] = month;
+    jsonToSaveBE["year"] = year;
     jsonToSaveBE["title"] = window.localStorage.getItem("FirstName") + "/" + jsonToSaveBE["startDate"] + " to " + jsonToSaveBE["endDate"];
 
     var pageRefSuccess = defaultPagePath + 'success.html';
@@ -3592,21 +3699,17 @@ function clearDivRequest() {
 function expPrimaryId() {
 
     if (j("#source tr.selected").hasClass("selected")) {
-        var rowCount = $("#source tr.selected").length;
-        if (rowCount > 1) {
-            alert(window.lang.translate('Select single expense line for edit.'));
-        } else {
-            j("#source tr.selected").each(function(index, row) {
-                getPrimaryExpenseId(j(this).find('td.expNameId').text());
-            });
-        }
-    } else {
-        alert(window.lang.translate('Tap and select expenses to edit.'));
-    }
+        j("#source tr.selected").each(function(index, row) {
 
+            getPrimaryExpenseId(j(this).find('td.expNameId').text());
+
+        });
+
+    }
 }
 
 function editBusiExpMain(expPrimaryId) {
+
     var busExpDetailsArr = [];
     var jsonExpenseDetailsArr = [];
     expenseClaimDates = new Object;
@@ -3646,10 +3749,10 @@ function editBusiExpMain(expPrimaryId) {
             var data = dataURL.replace(/data:base64,/, '');
 
             jsonFindBE["imageAttach"] = data;
-
+            
             localStorage.setItem("jsonFindBE", JSON.stringify(jsonFindBE));
 
-            //console.log(JSON.stringify(jsonFindBE));
+            console.log(JSON.stringify(jsonFindBE));
 
         });
 
@@ -3793,3 +3896,91 @@ function voucherDetails(loadDiv) {
 }
 
 // ****************************************** Approval Pages -- End  *********************************** //
+
+// ****************************************** BSLI Changes -- Start  *********************************** //
+
+
+function showTravelDesk() {
+   if (window.localStorage.getItem("TdRole") == "true") {
+        document.getElementById('categoryTdRoleIDOneWay').style.display = "block";
+    } else {
+        document.getElementById('categoryTdRoleIDOneWay').style.display = "none";
+    }
+}
+
+function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails) {
+    var headerBackBtn = defaultPagePath + 'backbtnPage.html';
+    var selectedtrdetails = trdetails;
+    var trdetail = selectedtrdetails.split("$");
+    var title = trdetail[0];
+    var accHeadId = trdetail[1];
+    var jsonToSaveTS = new Object();
+    jsonToSaveTS["employeeId"] = window.localStorage.getItem("EmployeeId");
+    jsonToSaveTS["travelSettlementDetails"] = jsonTSArr;
+    jsonToSaveTS["startDate"] = travelSettlementDates.minInStringFormat;
+    jsonToSaveTS["endDate"] = travelSettlementDates.maxInStringFormat;
+    jsonToSaveTS["travelRequestID"] = travelRequestID;
+    jsonToSaveTS["ProcessStatus"] = "5";
+    jsonToSaveTS["title"] = title;
+    jsonToSaveTS["accountHeadId"] = accHeadId;
+    jsonToSaveTS["EntitlementAllowCheck"] = false;
+   // jsonToSaveTS["title"] = window.localStorage.getItem("FirstName") + "/" + jsonToSaveTS["startDate"] + " to " + jsonToSaveTS["endDate"];
+
+    requestRunning = true;
+    var pageRefSuccess = defaultPagePath + 'success.html';
+    var pageRefFailure = defaultPagePath + 'failure.html';
+    j.ajax({
+        url: window.localStorage.getItem("urlPath") + "SynchSubmitTravelSettlementExpense",
+        type: 'POST',
+        dataType: 'json',
+        crossDomain: true,
+        data: JSON.stringify(jsonToSaveTS),
+        success: function(data) {
+            if (data.Status == "Failure") {
+              
+                    alert(data.Message);
+
+            } else if (data.Status == "Success") {
+                successMessage = data.Message;
+                deleteSelectedTravelSettDetails(travelRequestID);
+                deleteSelectedTravelRequestFromTravelRequestDetails(travelRequestID);
+                j('#loading_Cat').hide();
+                j('#mainContainer').load(pageRefSuccess);
+                appPageHistory.push(pageRefSuccess);
+            } else {
+                successMessage = "Error: Oops something is wrong, Please Contact System Administer";
+                j('#loading_Cat').hide();
+                j('#mainContainer').load(pageRefFailure);
+                appPageHistory.push(pageRefFailure);
+            }
+        },
+        error: function(data) {
+            requestRunning = false;
+            alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+        }
+    });
+}
+
+function setTSEntitlementExceedMessage(returnJsonData, jsonToBeSend) {
+    var msg = returnJsonData.Message + ".\nThis voucher has exceeded Entitlements. Do you want to proceed?";
+    var IsEntitlementExceed = confirm(msg);
+    if (IsEntitlementExceed == true) {
+        onConfirm(IsEntitlementExceed, msg, jsonToBeSend);
+    } else {
+        return false;
+    }
+}
+
+function onConfirm(IsEntitlementExceed, errormsg, jsonToBeSend) {
+    if (IsEntitlementExceed == true) {
+        jsonToBeSend["EntitlementAllowCheck"] = true;
+        j('#loading_Cat').show();
+        saveTravelRequestAjax(jsonToBeSend);
+    } else {
+        j('#loading_Cat').hide();
+        return false;
+    }
+
+}
+
+// ****************************************** BSLI Changes -- End  *********************************** //
