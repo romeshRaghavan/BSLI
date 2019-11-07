@@ -412,7 +412,7 @@ function saveTravelSettleExpDetails(jsonTSArr, tsExpDetailsArr) {
     });
 }
 
-function sendForApprovalBusinessDetails(jsonBEArr, busExpDetailsArr, accountHeadID) {
+function sendForApprovalBusinessDetails(jsonBEArr, busExpDetailsArr, accountHeadID, month, year) {
     var jsonToSaveBE = new Object();
     jsonToSaveBE["employeeId"] = window.localStorage.getItem("EmployeeId");
     jsonToSaveBE["expenseDetails"] = jsonBEArr;
@@ -422,6 +422,8 @@ function sendForApprovalBusinessDetails(jsonBEArr, busExpDetailsArr, accountHead
     jsonToSaveBE["BudgetingStatus"] = window.localStorage.getItem("BudgetingStatus");
     jsonToSaveBE["accountHeadId"] = accountHeadID;
     jsonToSaveBE["ProcessStatus"] = "1";
+    jsonToSaveBE["month"] = month;
+    jsonToSaveBE["year"] = year;
     jsonToSaveBE["title"] = window.localStorage.getItem("FirstName") + "/" + jsonToSaveBE["startDate"] + " to " + jsonToSaveBE["endDate"];
 
     var pageRefSuccess = defaultPagePath + 'success.html';
@@ -784,7 +786,7 @@ function getFormattedDate(input) {
 
 }
 
-function validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file) {
+function validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file, paid_by, vendor_name, invoice_no) {
     if (exp_date == "") {
         alert(window.lang.translate('Expense Date is invalid'));
         return false;
@@ -857,6 +859,18 @@ function validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narratio
             alert(window.lang.translate('Attachment is mandatory.'));
             return false;
         }
+    }
+    if (paid_by == "") {
+        alert(window.lang.translate('Paid By is invalid'));
+        return false;
+    }
+    if (vendor_name == "") {
+        alert(window.lang.translate('Vendor Name is invalid'));
+        return false;
+    }
+    if (invoice_no == "") {
+        alert(window.lang.translate('Invoice Number is invalid'));
+        return false;
     }
 
     return true;
@@ -1701,7 +1715,7 @@ function createTravelExpenseNameDropDown(jsonExpenseNameArr) {
     });
 }
 
-function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id) {
+function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no) {
 
     if (travelRequestId == "-1") {
         alert(window.lang.translate('Travel Request Number is invalid.'));
@@ -1757,6 +1771,18 @@ function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelReq
 
     if (currency_id == "-1") {
         alert(window.lang.translate('Currency Name is invalid.'));
+        return false;
+    }
+    if (paid_by == "") {
+        alert(window.lang.translate('Paid By is invalid'));
+        return false;
+    }
+    if (vendor_name == "") {
+        alert(window.lang.translate('Vendor Name is invalid'));
+        return false;
+    }
+    if (invoice_no == "") {
+        alert(window.lang.translate('Invoice Number is invalid'));
         return false;
     }
     return true;
@@ -1875,6 +1901,11 @@ function oprationOnExpenseClaim() {
 
                             jsonFindBE["amount"] = j(this).find('td.expAmt1').text();
                             jsonFindBE["currencyId"] = j(this).find('td.currencyId').text();
+                            month = j(this).find('td.month').text();
+                            year = j(this).find('td.year').text();
+                            jsonFindBE["paidBy"] = j(this).find('td.paidBy').text();
+                            jsonFindBE["vendorName"] = j(this).find('td.vendorName').text();
+                            jsonFindBE["invoiceNo"] = j(this).find('td.invoiceNo').text();
 
                             var dataURL = j(this).find('td.busAttachment').text();
 
@@ -1908,7 +1939,7 @@ function oprationOnExpenseClaim() {
                     });
 
                     if (accountHeadIdToBeSent != "" && busExpDetailsArr.length > 0) {
-                        sendForApprovalBusinessDetails(jsonExpenseDetailsArr, busExpDetailsArr, accountHeadIdToBeSent);
+                        sendForApprovalBusinessDetails(jsonExpenseDetailsArr, busExpDetailsArr, accountHeadIdToBeSent, month, year);
                     }
                 } else {
                     alert(window.lang.translate('Tap and select Expenses to send for Approval with server.'));
@@ -1961,6 +1992,9 @@ function oprationOnExpenseClaim() {
                     jsonFindBE["fromLocation"] = j(this).find('td.expFromLoc1').text();
                     jsonFindBE["toLocation"] = j(this).find('td.expToLoc1').text();
                     jsonFindBE["narration"] = j(this).find('td.expNarration1').text();
+                    jsonFindBE["paidBy"] = j(this).find('td.paidBy').text();
+                    jsonFindBE["vendorName"] = j(this).find('td.vendorName').text();
+                    jsonFindBE["invoiceNo"] = j(this).find('td.invoiceNo').text();
                     if (j(this).find('td.expUnit').text() != "") {
                         jsonFindBE["units"] = j(this).find('td.expUnit').text();
                     }
@@ -2029,6 +2063,9 @@ function oprationONTravelSettlementExp() {
                 jsonFindTS["units"] = j(this).find('td.expUnit').text();
                 jsonFindTS["amount"] = j(this).find('td.expAmt1').text();
                 jsonFindTS["currencyId"] = j(this).find('td.currencyId').text();
+                jsonFindTS["paidBy"] = j(this).find('td.paidBy').text();
+                jsonFindTS["vendorName"] = j(this).find('td.vendorName').text();
+                jsonFindTS["invoiceNo"] = j(this).find('td.invoiceNo').text();
 
                 var dataURL = j(this).find('td.tsExpAttachment').text();
                 //For IOS image save
@@ -2136,6 +2173,9 @@ function oprationONTravelSettlementExp() {
                 jsonFindTS["units"] = j(this).find('td.expUnit').text();
                 jsonFindTS["amount"] = j(this).find('td.expAmt1').text();
                 jsonFindTS["currencyId"] = j(this).find('td.currencyId').text();
+                jsonFindTS["paidBy"] = j(this).find('td.paidBy').text();
+                jsonFindTS["vendorName"] = j(this).find('td.vendorName').text();
+                jsonFindTS["invoiceNo"] = j(this).find('td.invoiceNo').text();
 
                 var dataURL = j(this).find('td.tsExpAttachment').text();
                 //For IOS image save
@@ -3198,6 +3238,9 @@ function submitBEWithEA() {
                 jsonFindBE["fromLocation"] = j(this).find('td.expFromLoc1').text();
                 jsonFindBE["toLocation"] = j(this).find('td.expToLoc1').text();
                 jsonFindBE["narration"] = j(this).find('td.expNarration1').text();
+                jsonFindBE["paidBy"] = j(this).find('td.paidBy').text();
+                jsonFindBE["vendorName"] = j(this).find('td.vendorName').text();
+                jsonFindBE["invoiceNo"] = j(this).find('td.invoiceNo').text();
 
                 jsonFindBE["isErReqd"] = j(this).find('td.isErReqd').text();
                 jsonFindBE["ERLimitAmt"] = j(this).find('td.ERLimitAmt').text();
@@ -3908,7 +3951,7 @@ function showTravelDesk() {
     }
 }
 
-function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails) {
+function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails,entitlementAllowCheck) {
     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
     var selectedtrdetails = trdetails;
     var trdetail = selectedtrdetails.split("$");
@@ -3923,7 +3966,7 @@ function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelReques
     jsonToSaveTS["ProcessStatus"] = "5";
     jsonToSaveTS["title"] = title;
     jsonToSaveTS["accountHeadId"] = accHeadId;
-    jsonToSaveTS["EntitlementAllowCheck"] = false;
+    jsonToSaveTS["EntitlementAllowCheck"] = entitlementAllowCheck;
    // jsonToSaveTS["title"] = window.localStorage.getItem("FirstName") + "/" + jsonToSaveTS["startDate"] + " to " + jsonToSaveTS["endDate"];
 
     requestRunning = true;
@@ -3937,19 +3980,29 @@ function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelReques
         data: JSON.stringify(jsonToSaveTS),
         success: function(data) {
             if (data.Status == "Failure") {
-              
+              j('#loading_Cat').hide();
+                if (data.hasOwnProperty('IsEntitlementExceed')) {
+                    setTSEntitlementExceedMessage(data, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails);
+                } else {
+                    j('#loading_Cat').hide();
                     alert(data.Message);
+                }
 
             } else if (data.Status == "Success") {
                 successMessage = data.Message;
                 deleteSelectedTravelSettDetails(travelRequestID);
                 deleteSelectedTravelRequestFromTravelRequestDetails(travelRequestID);
+                requestRunning = false;
                 j('#loading_Cat').hide();
+                j('#savesyncwrapper').hide();
+                j('#mainHeader').load(headerBackBtn);
                 j('#mainContainer').load(pageRefSuccess);
                 appPageHistory.push(pageRefSuccess);
             } else {
+                requestRunning = false;
                 successMessage = "Error: Oops something is wrong, Please Contact System Administer";
                 j('#loading_Cat').hide();
+                j('#mainHeader').load(headerBackBtn);
                 j('#mainContainer').load(pageRefFailure);
                 appPageHistory.push(pageRefFailure);
             }
@@ -3961,21 +4014,21 @@ function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelReques
     });
 }
 
-function setTSEntitlementExceedMessage(returnJsonData, jsonToBeSend) {
-    var msg = returnJsonData.Message + ".\nThis voucher has exceeded Entitlements. Do you want to proceed?";
+function setTSEntitlementExceedMessage(returnJsonData, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails) {
+    var msg = returnJsonData.Message + "This voucher has exceeded Entitlements. Do you want to proceed?";
     var IsEntitlementExceed = confirm(msg);
     if (IsEntitlementExceed == true) {
-        onConfirm(IsEntitlementExceed, msg, jsonToBeSend);
+        onConfirm(IsEntitlementExceed, msg, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails);
     } else {
         return false;
     }
 }
 
-function onConfirm(IsEntitlementExceed, errormsg, jsonToBeSend) {
+function onConfirm(IsEntitlementExceed, errormsg, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails) {
     if (IsEntitlementExceed == true) {
-        jsonToBeSend["EntitlementAllowCheck"] = true;
+        var entitlementAllowCheck = true;
         j('#loading_Cat').show();
-        saveTravelRequestAjax(jsonToBeSend);
+        sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails, entitlementAllowCheck);
     } else {
         j('#loading_Cat').hide();
         return false;

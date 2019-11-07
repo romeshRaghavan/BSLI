@@ -139,7 +139,7 @@
          t.executeSql("CREATE TABLE IF NOT EXISTS currencyMst (currencyId INTEGER PRIMARY KEY ASC, currencyName TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS accountHeadMst (accountHeadId INTEGER PRIMARY KEY ASC, accHeadName TEXT, isMonthlyRestricted CHAR(1))");
          t.executeSql("CREATE TABLE IF NOT EXISTS expNameMst (id INTEGER PRIMARY KEY ASC,expNameMstId INTEGER, expName TEXT, expIsFromToReq CHAR(1),accCodeId INTEGER NOT NULL,accHeadId INTEGER NOT NULL,  expIsUnitReq CHAR(1),expRatePerUnit Double, expFixedOrVariable CHAR(1), expFixedLimitAmt Double,expPerUnitActiveInative CHAR(1),isErReqd CHAR(1),limitAmountForER Double,isAttachmentReq CHAR(1),isEntiLineOrVoucherLevel CHAR(1),periodicity TEXT,isUnitPeriodic TEXT)");
-         t.executeSql("CREATE TABLE IF NOT EXISTS businessExpDetails (busExpId INTEGER PRIMARY KEY ASC, accHeadId INTEGER REFERENCES accountHeadMst(accHeadId), expNameId INTEGER REFERENCES expNameMst(expNameId),expDate DATE, expFromLoc TEXT, expToLoc TEXT, expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),isEntitlementExceeded TEXT,busExpAttachment BLOB,wayPointunitValue TEXT,month TEXT,year TEXT)");
+         t.executeSql("CREATE TABLE IF NOT EXISTS businessExpDetails (busExpId INTEGER PRIMARY KEY ASC, accHeadId INTEGER REFERENCES accountHeadMst(accHeadId), expNameId INTEGER REFERENCES expNameMst(expNameId),expDate DATE, expFromLoc TEXT, expToLoc TEXT, expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),isEntitlementExceeded TEXT,busExpAttachment BLOB,wayPointunitValue TEXT,month TEXT,year TEXT,paidBy INTEGER,vendorName TEXT,invoiceNo TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS walletMst (walletId INTEGER PRIMARY KEY ASC AUTOINCREMENT, walletAttachment  BLOB)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelModeMst (travelModeId INTEGER PRIMARY KEY ASC, travelModeName TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelCategoryMst (travelCategoryId INTEGER PRIMARY KEY ASC, travelCategoryName TEXT,travelModeId INTEGER)");
@@ -147,7 +147,7 @@
          t.executeSql("CREATE TABLE IF NOT EXISTS travelTypeMst (travelTypeId INTEGER PRIMARY KEY ASC, travelTypeName TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelAccountHeadMst (id INTEGER PRIMARY KEY ASC,accHeadId INTEGER, accHeadName TEXT, processId INTEGER)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelExpenseNameMst (id INTEGER PRIMARY KEY ASC,expenseNameId INTEGER, expenseName TEXT, isModeCategory char(1),accountCodeId INTEGER,accHeadId INTEGER REFERENCES travelAccountHeadMst(accHeadId))");
-         t.executeSql("CREATE TABLE IF NOT EXISTS travelSettleExpDetails (tsExpId INTEGER PRIMARY KEY ASC,travelRequestId INTEGER, accHeadId INTEGER REFERENCES travelAccountHeadMst(accHeadId), expNameId INTEGER REFERENCES travelExpenseNameMst(expenseNameId),expDate DATE,expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),travelModeId INTEGER REFERENCES travelModeMst(travelModeId), travelCategoryId INTEGER REFERENCES travelCategoryMst(travelCategoryId), cityTownId INTEGER REFERENCES cityTownMst(cityTownId),tsExpAttachment BLOB)");
+         t.executeSql("CREATE TABLE IF NOT EXISTS travelSettleExpDetails (tsExpId INTEGER PRIMARY KEY ASC,travelRequestId INTEGER, accHeadId INTEGER REFERENCES travelAccountHeadMst(accHeadId), expNameId INTEGER REFERENCES travelExpenseNameMst(expenseNameId),expDate DATE,expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),travelModeId INTEGER REFERENCES travelModeMst(travelModeId), travelCategoryId INTEGER REFERENCES travelCategoryMst(travelCategoryId), cityTownId INTEGER REFERENCES cityTownMst(cityTownId),tsExpAttachment BLOB,paidBy INTEGER,vendorName TEXT,invoiceNo TEXT)");
          t.executeSql("CREATE TABLE IF NOT EXISTS travelRequestDetails (travelRequestId INTEGER PRIMARY KEY ASC, travelRequestNo TEXT,title TEXT, accountHeadId INTEGER,travelStartDate DATE,travelEndDate DATE,travelDomOrInter CHAR(1), advanceRequested TEXT,advanceAmount INTEGER)");
          /*         t.executeSql("CREATE TABLE IF NOT EXISTS travelRequestDetails (travelRequestId INTEGER PRIMARY KEY ASC, travelRequestNo TEXT,title TEXT, accountHeadId INTEGER,travelStartDate DATE,travelEndDate DATE,travelDomOrInter CHAR(1))");
           */
@@ -197,6 +197,9 @@
        var exp_unit = document.getElementById('expUnit').value;
        var way_points = document.getElementById('wayPointunitValue').value;
        var exp_amt = document.getElementById('expAmt').value;
+       var paid_by = document.getElementById('paidByValue').value;
+       var vendor_name = document.getElementById('vendorName').value;
+       var invoice_no = document.getElementById('invoiceNo').value;
        var entitlement_exceeded = exceptionStatus;
        exceptionStatus = "N";
        var acc_head_id;
@@ -238,7 +241,7 @@
            file = fileTempCameraBE;
        }
 
-       if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file)) {
+       if (validateExpenseDetails(exp_date, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, acc_head_id, exp_name_id, currency_id, file, paid_by, vendor_name, invoice_no)) {
 
            j('#loading_Cat').show();
 
@@ -247,7 +250,7 @@
            }
 
            mydb.transaction(function(t) {
-               t.executeSql("INSERT INTO businessExpDetails (expDate, accHeadId,expNameId,expFromLoc, expToLoc, expNarration, expUnit,expAmt,currencyId,isEntitlementExceeded,busExpAttachment,wayPointunitValue,month,year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, acc_head_id, exp_name_id, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, currency_id, entitlement_exceeded, file, way_points, enteredMonth, year]);
+               t.executeSql("INSERT INTO businessExpDetails (expDate, accHeadId,expNameId,expFromLoc, expToLoc, expNarration, expUnit,expAmt,currencyId,isEntitlementExceeded,busExpAttachment,wayPointunitValue,month,year,paidBy,vendorName,invoiceNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, acc_head_id, exp_name_id, exp_from_loc, exp_to_loc, exp_narration, exp_unit, exp_amt, currency_id, entitlement_exceeded, file, way_points, enteredMonth, year, paid_by, vendor_name, invoice_no]);
 
                if (status == "0") {
 
@@ -261,6 +264,9 @@
                    document.getElementById('showHideDropDown').style.display = "none";
                    document.getElementById('monthLabel').style.display = "none";
                    document.getElementById('showHideDropDown').value = "";
+                   document.getElementById('paidByValue').value = "";
+                   document.getElementById('vendorName').value = "";
+                   document.getElementById('invoiceNo').value = "";
                    smallImageBE.style.display = 'none';
                    smallImageBE.src = "";
                    j('#errorMsgArea').children('span').text("");
@@ -314,6 +320,9 @@
          var exp_narration = document.getElementById('expNarration').value;
          var exp_unit = document.getElementById('expUnit').value;
          var exp_amt = document.getElementById('expAmt').value;
+         var paid_by = document.getElementById('paidByValue').value;
+         var vendor_name = document.getElementById('vendorName').value;
+         var invoice_no = document.getElementById('invoiceNo').value;
          var travelRequestId;
          var acc_head_val;
          var exp_name_id;
@@ -382,20 +391,23 @@
              alert("trdetails::"+trdetails);
          }*/
 
-         if (validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id)) {
+         if (validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no)) {
              j('#loading_Cat').show();
 
              if (file == undefined) {
                  file = "";
              }
              mydb.transaction(function(t) {
-                 t.executeSql("INSERT INTO travelSettleExpDetails  (expDate, travelRequestId,expNameId,expNarration, expUnit,expAmt,currencyId,travelModeId,travelCategoryId,cityTownId,tsExpAttachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, travelRequestId, exp_name_id, exp_narration, exp_unit, exp_amt, currency_id, travelMode_id, travelCategory_id, cityTown_id, file]);
+                 t.executeSql("INSERT INTO travelSettleExpDetails  (expDate, travelRequestId,expNameId,expNarration, expUnit,expAmt,currencyId,travelModeId,travelCategoryId,cityTownId,tsExpAttachment,paidBy,vendorName,invoiceNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, travelRequestId, exp_name_id, exp_narration, exp_unit, exp_amt, currency_id, travelMode_id, travelCategory_id, cityTown_id, file, paid_by, vendor_name, invoice_no]);
 
                  if (status == "0") {
                      document.getElementById('expDate').value = "";
                      document.getElementById('expNarration').value = "";
                      document.getElementById('expUnit').value = "";
                      document.getElementById('expAmt').value = "";
+                     document.getElementById('paidByValue').value = "";
+                     document.getElementById('vendorName').value = "";
+                     document.getElementById('invoiceNo').value = "";
                      j('#travelRequestName').select2('data', '');
                      j('#travelExpenseName').select2('data', '');
                      j('#travelModeForTS').select2('data', '');
@@ -407,6 +419,7 @@
                      smallImageTS.src = "";
                      j('#loading_Cat').hide();
                      //j('#syncSuccessMsg').empty();
+                     j('#travelErrorMsgArea').children('span').text("");
                      document.getElementById("syncSuccessMsg").innerHTML = "Expenses added successfully.";
                      j('#syncSuccessMsg').hide().fadeIn('slow').delay(300).fadeOut('slow');
                      resetImageData();
@@ -571,13 +584,21 @@
                          j('<td></td>').attr({
                              class: ["expFixedLimitAmt", "displayNone"].join(' ')
                          }).text(row.expFixedLimitAmt).appendTo(rowss);
-                         alert("sagar4");
                          j('<td></td>').attr({
                              class: ["month", "displayNone"].join(' ')
                          }).text(row.month).appendTo(rowss);
                          j('<td></td>').attr({
                              class: ["year", "displayNone"].join(' ')
                          }).text(row.year).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["paidBy", "displayNone"].join(' ')
+                         }).text(row.paidBy).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["vendorName", "displayNone"].join(' ')
+                         }).text(row.vendorName).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["invoiceNo", "displayNone"].join(' ')
+                         }).text(row.invoiceNo).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -629,7 +650,7 @@
  }
 
  function fetchTravelSettlementExp() {
-
+     
      mytable = j('<table></table>').attr({
          id: "source",
          class: ["table", "table-striped", "table-bordered"].join(' ')
@@ -736,6 +757,15 @@
                          j('<td></td>').attr({
                              class: ["accountCodeId", "displayNone"].join(' ')
                          }).text(row.accountCodeId).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["paidBy", "displayNone"].join(' ')
+                         }).text(row.paidBy).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["vendorName", "displayNone"].join(' ')
+                         }).text(row.vendorName).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["invoiceNo", "displayNone"].join(' ')
+                         }).text(row.invoiceNo).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -2179,6 +2209,15 @@
                          j('<td></td>').attr({
                              class: ["year", "displayNone"].join(' ')
                          }).text(row.year).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["paidBy", "displayNone"].join(' ')
+                         }).text(row.paidBy).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["vendorName", "displayNone"].join(' ')
+                         }).text(row.vendorName).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["invoiceNo", "displayNone"].join(' ')
+                         }).text(row.invoiceNo).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -2434,6 +2473,15 @@
                          j('<td></td>').attr({
                              class: ["year", "displayNone"].join(' ')
                          }).text(row.year).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["paidBy", "displayNone"].join(' ')
+                         }).text(row.paidBy).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["vendorName", "displayNone"].join(' ')
+                         }).text(row.vendorName).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["invoiceNo", "displayNone"].join(' ')
+                         }).text(row.invoiceNo).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -2664,13 +2712,21 @@
                          j('<td></td>').attr({
                              class: ["expFixedLimitAmt", "displayNone"].join(' ')
                          }).text(row.expFixedLimitAmt).appendTo(rowss);
-                         alert("sagar2");
                          j('<td></td>').attr({
                              class: ["month", "displayNone"].join(' ')
                          }).text(row.month).appendTo(rowss);
                          j('<td></td>').attr({
                              class: ["year", "displayNone"].join(' ')
                          }).text(row.year).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["paidBy", "displayNone"].join(' ')
+                         }).text(row.paidBy).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["vendorName", "displayNone"].join(' ')
+                         }).text(row.vendorName).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["invoiceNo", "displayNone"].join(' ')
+                         }).text(row.invoiceNo).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -2811,6 +2867,15 @@
                          j('<td></td>').attr({
                              class: ["accountCodeId", "displayNone"].join(' ')
                          }).text(row.accountCodeId).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["paidBy", "displayNone"].join(' ')
+                         }).text(row.paidBy).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["vendorName", "displayNone"].join(' ')
+                         }).text(row.vendorName).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["invoiceNo", "displayNone"].join(' ')
+                         }).text(row.invoiceNo).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -3380,6 +3445,7 @@
  // *********************************  Upcoming Trips  -- Start *******************************************//
 
  function fetchDateForTrips() {
+ 
      var jsonForTrips = new Object();
      jsonForTrips["EmployeeId"] = window.localStorage.getItem("EmployeeId");
      ajaxCallForTripDates(jsonForTrips);
@@ -3560,6 +3626,7 @@
  }
 
  function fetchRequestNos() {
+  
      var jsonForRequest = new Object();
      jsonForRequest["EmployeeId"] = window.localStorage.getItem("EmployeeId");
      ajaxCallForfetchingRequestNos(jsonForRequest);
@@ -4558,7 +4625,7 @@
         document.getElementById('expAmt').value ="";
         return false;
       }
-      if(travelModeID == '' || travelModeID == undefined){
+      /*if(travelModeID == '' || travelModeID == undefined){
         alert("Please Select Travel Mode");
         document.getElementById('expAmt').value ="";
         return false;
@@ -4567,7 +4634,7 @@
         alert("Please Select Travel Category");
         document.getElementById('expAmt').value ="";
         return false;
-      }
+      }*/
       if(cityTownID == '' || cityTownID == undefined){
         alert("Please Select From Location");
         document.getElementById('expAmt').value ="";
@@ -4624,7 +4691,7 @@
                              var row = results.rows.item(i);
                              var amount = row.amount;
                              var tsAmount = document.getElementById('expAmt').value;
-                             var totalamt = noOfUnit * tsAmount;
+                             var totalamt = (tsAmount / noOfUnit);
                              console.log("totalamt" + totalamt);
                              console.log("tsAmount" + tsAmount);
                              var exceptionMessage = "";
@@ -4633,7 +4700,7 @@
                                  exceptionMessage = "(Exceeding Per Diem Entitlement amount defined: " + amount + " for Expense Head :  " + travelExpenseReqName + " and City/Town : " + cityTownName + ")";
                                  j('#travelErrorMsgArea').children('span').text(exceptionMessage);
                              } else {
-                                 j('#travelErrorMsgArea').children('span').text(exceptionMessage);
+                                 j('#travelErrorMsgArea').children('span').text("");
                              }
 
                          }
@@ -5045,7 +5112,8 @@ function validateTravelRequest() {
           var title = row.title;
           var accountHeadId = row.accountHeadId;
           trdetails = title+"$"+accountHeadId;
-          sendForApprovalTravelSettleExp(jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr, travelRequestId,trdetails);
+          var entitlementAllowCheck = false;
+          sendForApprovalTravelSettleExp(jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr, travelRequestId,trdetails,entitlementAllowCheck);
         }
       });
      });
