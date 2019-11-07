@@ -340,6 +340,21 @@
                                         <li id = "advanceTxtArea" style="display: none;">
                                             <label class="advAmount">Advance Amount:</label><input readonly = "true" class="advAmountfield" style="text-align: right;" type="text" id="advAmt">
                                         </li>
+                                        <li style="width: 50%;">
+                                            <font lang="en" face="verdana" size="0.8" color="green">Select Paid By:</font>
+                                             <select  name="paymentMode" id ="paidByValue">
+                                                <option value="">-- None --</option>
+                                                <option value="1">Cash</option>
+                                            </select>
+                                        </li>
+                                        <li>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                 <input lang="en" id="vendorName" style="width:48%;" type="text" placeholder="Enter Vendor Name">&nbsp;
+                                                  <input lang="en" id="invoiceNo" style="width:48%;" type="text" placeholder="Enter Invoice Number">
+                                                </div>
+                                            </div>
+                                        </li>
                                         <li>
                                             <p><font lang="en" face="verdana" size="1" color="green">Unit is no. of persons/Kms/meals etc.</font></p>
                                             <input lang="en" id="expUnit" style="width: 22%" type="tel" placeholder="Units" onkeyup="resetAmount();">
