@@ -3232,7 +3232,7 @@
 
                      if (successMessage != "") {
                          var confirmBox = confirm(successMessage);
-
+    
                          if (confirmBox == true) {
                              approvalServiceForBEwithEA(jsonToSaveBE, busExpDetailsArr, empAdvArr, pageRefSuccess, pageRefFailure);
                          } else {
@@ -5104,6 +5104,7 @@ function validateTravelRequest() {
  }
 
  function findTravelRequestDetails(travelRequestId,jsonTravelSettlementDetailsArr, travelSettleExpDetailsArr) {
+  
    if (mydb) {
      mydb.transaction(function(t) {
        var result = t.executeSql("select * from travelRequestDetails where travelRequestId=" + travelRequestId, [], function(transaction, results){

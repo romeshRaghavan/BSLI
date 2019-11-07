@@ -2112,9 +2112,7 @@ function oprationONTravelSettlementExp() {
     });
 
     j('#sendTS').on('click', function(e) {
-        if (requestRunning) {
-            return;
-        }
+
         var jsonTravelSettlementDetailsArr = [];
         var travelSettleExpDetailsArr = [];
        // minExpenseClaimDate = new Object;
@@ -3952,6 +3950,7 @@ function showTravelDesk() {
 }
 
 function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails,entitlementAllowCheck) {
+   
     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
     var selectedtrdetails = trdetails;
     var trdetail = selectedtrdetails.split("$");
@@ -3972,6 +3971,7 @@ function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelReques
     requestRunning = true;
     var pageRefSuccess = defaultPagePath + 'success.html';
     var pageRefFailure = defaultPagePath + 'failure.html';
+    j('#loading_Cat').show();
     j.ajax({
         url: window.localStorage.getItem("urlPath") + "SynchSubmitTravelSettlementExpense",
         type: 'POST',
@@ -3979,6 +3979,7 @@ function sendForApprovalTravelSettleExp(jsonTSArr, tsExpDetailsArr, travelReques
         crossDomain: true,
         data: JSON.stringify(jsonToSaveTS),
         success: function(data) {
+
             if (data.Status == "Failure") {
               j('#loading_Cat').hide();
                 if (data.hasOwnProperty('IsEntitlementExceed')) {
