@@ -13,35 +13,6 @@
         defaultLang: 'en'
     });
 </script>
-<script>
-    var moreActions = app.actions.create({
-  buttons: [
-    [
-      {
-        text: 'Here comes some optional description or warning for actions below',
-        label: true,
-      },
-      {
-        text: 'Action 1',
-      },
-      {
-        text: 'Action 2',
-      },
-    ],
-    [
-      {
-        text: 'Cancel',
-        bold: true,
-      }
-    ]
-  ],
-});
-$$('.open-more-actions').on('click', function () {
-  moreActions.open();
-});
-</script>
-<script language="JavaScript" type="text/javascript" src="js/index.js"></script>
-
 
     <style>
         .btn-group-vertical>.btn-group:after,
@@ -163,82 +134,16 @@ $$('.open-more-actions').on('click', function () {
             font-weight: 500;
         }
     </style>
-    <h1 style="padding-top:10px">My Approval</h1>
+    <body>
+         <h1 lang="en" style="padding-top:10px">My Approval</h1>
      <div class="container-fluid" style="background-color: white;">
-            <div class="row">
-                <div class="col-md-12" onclick="voucherDetails(2);">
-                        <div class="card shadow">
-                            <div class="card-header" style="font-size: 15px;color: #076473;">BE-18-12-000015</div>
-                            <div class="card-body">
-                                 <div style="display: inline-flex;">
-                                    <label style="margin-left: -5px;">Business Exp</label>
-                                    <span style="margin-left:15px;">
-                                        <i class="fa fa-user"></i>
-                                        <label>Adam A</label>
-                                    </span>
-                                    <span style="margin-left:25px;">
-                                        <i class="fa fa-money"></i>
-                                        <label>300 USD</label>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <span style="width: 25%;display: contents;">
-                                        <i class="fa fa-calendar" aria-hidden="true" style="margin-left: 5px;"></i>
-                                        <label><h5>10-Jan-2018 - 5-Feb-2018</h5></label>
-                                    </span>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="col-md-12" onclick="voucherDetails(1);">
-                    <div class="card shadow">
-                        <div class="card-header" style="font-size: 15px;color: #076473;">BE-18-12-000014</div>
-                        <div class="card-body">
-                            <div style="display: inline-flex;">
-                                    <label style="margin-left: -5px;">Client Visit</label>
-                                    <span style="margin-left:30px;">
-                                        <i class="fa fa-user"></i>
-                                        <label>Elsa S</label>
-                                    </span>
-                                    <span style="margin-left:45px;">
-                                        <i class="fa fa-money"></i>
-                                        <label>500 USD</label>
-                                    </span>
-                                </div> 
-                            </div>
-                        <div class="card-footer">
-                            <span style="width: 25%;display: contents;">
-                                <i class="fa fa-calendar" aria-hidden="true" style="margin-left: 5px;"></i>
-                                <label><h5>10-Dec-2018 - 20-Dec-2018</h5></label>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="col-md-12" onclick="voucherDetails(3);">
-                        <div class="card shadow">
-                            <div class="card-header" style="font-size: 15px;color: #076473;">BE-18-12-000016</div>
-                            <div class="card-body">
-                                <div style="display: inline-flex;">
-                                    <label style="margin-left: -5px;">Client Meeting</label>
-                                    <span style="margin-left:15px;">
-                                        <i class="fa fa-user"></i>
-                                        <label>Wilson M</label>
-                                    </span>
-                                    <span style="margin-left:15px;">
-                                        <i class="fa fa-money"></i>
-                                        <label>200 USD</label>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <span style="width: 25%;display: contents;">
-                                        <i class="fa fa-calendar" aria-hidden="true" style="margin-left: 5px;"></i>
-                                        <label><h5>1-June-2018 - 10-June-2018</h5></label>
-                                    </span>
-                            </div>
-                        </div>
-                    </div>
+            <div  id = "voucherHeader" class="row">
+       
             </div>
-</div>
+
+    </div>
+ </body>
+ <script type="text/javascript">
+      syncVoucherHeader(enableDivBasedOnStatus);
+ </script>
+   
