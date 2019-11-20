@@ -114,11 +114,11 @@
                                             <tr>
                                                 <td colspan="2" style="border-top: none;">
                                                     <div class="datetime">
-                                                        <input lang="en" type="text" id="selectDate_One" class="span2 dp1" readonly="true" placeholder="Select Date">
+                                                        <input lang="en" type="text" id="selectDate_One" class="span2 dp1" readonly="true" placeholder="Select Date11">
                                                     </div>
 
                                                     <div class="datetime1">
-                                                        <input lang="en" class="timepicker1" id="selectTime_One" type="text" name="timepicker1" readonly="true" placeholder="Select Time" />
+                                                        <input lang="en" class="timepicker1" id="selectTime_One" type="text" name="timepicker1" readonly="true" placeholder="Select Time22" />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -258,6 +258,7 @@
                     </div>
 
                     <script>
+                        delayMstForTR();
                         $(function() {
 
                             $("#selectDate_One").datepicker({
@@ -312,11 +313,14 @@
                                             <input lang="en" placeholder="Travel Request Number" id="travelRequestName" type="hidden" style="width: 98%">
                                             <br>
                                             <br>
-                                            <p><font lang="en" face="verdana" size="0.8" color="green">Start Dt.</font>
+                                            <p id = "tsDate"><font lang="en" face="verdana" size="0.8" color="green">00Start Dt.</font>
                                                 <label for="startDate" style="width: 30%" />
-                                                <font lang="en" face="verdana" size="0.8" color="green">End Dt.</font>
+                                                <font lang="en" face="verdana" size="0.8" color="green">11End Dt.</font>
                                                 <label for="endDate" style="width: 30%" />
                                             </p>
+                                        </li>
+                                        <li>
+                                            <input lang="en" id="tsAccountHead" placeholder="Select Account Head" type="hidden" style="width: 98%">
                                         </li>
                                         <li>
                                             <div role="main" class="ui-content">
@@ -393,13 +397,18 @@
 
                         j("#travelRequestName").change(function() {
                             resetDatepicker();
+                            getAccountHeadNamesOnRequestNoChange();
                             getExpenseNamesOnRequestNoChange();
-                            getStartandEndOnRequestNoChange();
+                            //getStartandEndOnRequestNoChange();
                             getCurrencyOnRequestNoChange();
                             getAdvanceAmountOnChange();
                             resetAmountAndEntitlementMsg();
                             j('#advanceTxtArea').hide();
                             //tripDetails();
+                        });
+
+                        j("#tsAccountHead").change(function() {
+                            getTravelExpenseNamesBasedOnAccountHead();
                         });
 
                         j("#travelExpenseName").change(function() {

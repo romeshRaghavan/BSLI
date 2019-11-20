@@ -156,7 +156,8 @@
                         </div>
                         <script>
                             hideEAIcons();
-                            var currentMonth;
+                            delayMstForBE();
+                            /*var currentMonth;
                             var currentDate;
                             var currentYear;
                             $(function() {
@@ -175,9 +176,12 @@
                             if (currentMonth < 10) {
                                 currentMonth = '0' + currentMonth
                             }
-                            document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
+                            document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;*/
                             j("#accountHead").change(function() {
                                 getExpenseNamesBasedOnAccountHead();
+                                document.getElementById('showHideDropDown').value = "";
+                                $('#expDate').datepicker('destroy');
+                                delayMstForBE();
                             });
                             j("#expenseName").change(function() {
                                 getPerUnitBasedOnExpense();

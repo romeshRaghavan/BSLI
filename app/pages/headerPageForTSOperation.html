@@ -17,6 +17,10 @@
     lang.init({
         defaultLang: 'en'
     });
+
+    $(".btn").mouseup(function(){
+        $(this).blur();
+    })
 </script>
 <div class="topfixednavigate">
     <span onclick="goBack();" class="backbluebtn"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
