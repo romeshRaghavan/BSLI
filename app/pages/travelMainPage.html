@@ -421,6 +421,7 @@
                         j("#Citytown").change(function() {
                             resetAmountAndEntitlementMsg();
                         });
+                        j('#currency').select2('disable');
 
                         function validate() {
                             var field = document.getElementById("expAmt");
