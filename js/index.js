@@ -1072,6 +1072,7 @@ function syncSubmitTravelDetails() {
 }
 
 function saveTravelRequestAjax(jsonToSaveTR) {
+   
     var pageRefSuccess = defaultPagePath + 'success.html';
     var pageRefFailure = defaultPagePath + 'failure.html';
     j('#loading_Cat').show();
@@ -1872,14 +1873,12 @@ function oprationOnExpenseClaim() {
             });
         } else {
             j('#send').on('click', function(e) {
-                alert("kkk");
                 var jsonExpenseDetailsArr = [];
                 var busExpDetailsArr = [];
                 expenseClaimDates = new Object;
                 if (requestRunning) {
                     return;
                 }
-                alert("jjj");
                 var accountHeadIdToBeSent = ''
                 exceptionMessage = '';
                 if (j("#source tr.selected").hasClass("selected")) {
@@ -2441,10 +2440,12 @@ function hideTRIcons() {
 }
 
 function hideBusinessExpense() {
-    if (window.localStorage.getItem("mobileEC") == "true") {
-        document.getElementById('businessExpenseTab').style.display = "block";
-    } else {
-        document.getElementById('businessExpenseTab').style.display = "none";
+       if (document.getElementById('businessExpenseTab') != null) {
+        if (window.localStorage.getItem("mobileEC") == "true") {
+            document.getElementById('businessExpenseTab').style.display = "block";
+        } else {
+            document.getElementById('businessExpenseTab').style.display = "none";
+        }
     }
 }
 
@@ -2866,6 +2867,65 @@ function computeTotalDistance(result) {
 function closeMap() {
     document.getElementById('openModal').style.display = "none";
 }
+
+function fetchCountForMyApproval(statusOfVoucher) {
+     var jsonSentToSync = new Object();
+     jsonSentToSync["employeeId"] = window.localStorage.getItem("EmployeeId");
+     var ab = window.localStorage.getItem("EmployeeId")
+
+     jsonSentToSync["processId"] = "1";
+     jsonSentToSync["vocherStatus"] = statusOfVoucher;
+
+     j.ajax({
+         url: window.localStorage.getItem("urlPath") + "FetchCount",
+         type: 'POST',
+         dataType: 'json',
+         crossDomain: true,
+         data: JSON.stringify(jsonSentToSync),
+         success: function(data) {
+
+             if (data.Status == "Success") {
+
+                 var countForVouchers = data.VoucherCount.toString();
+                 
+                if(statusOfVoucher == 'A' && document.getElementById('count') != null){
+                 document.getElementById("count").innerHTML = countForVouchers.match(/\d+/);
+                }else{
+                     var arrayOfCount = countForVouchers.split(",");
+
+                     for(var i = 0 ; i < arrayOfCount.length ; i++){
+
+                        if(arrayOfCount[i].includes("D") && document.getElementById('draftCount') != null){
+                            document.getElementById("draftCount").innerHTML = arrayOfCount[i].match(/\d+/);
+                        }
+                        if(arrayOfCount[i].includes("P") && document.getElementById('pendingCount') != null){
+                            document.getElementById("pendingCount").innerHTML = arrayOfCount[i].match(/\d+/);
+                        }
+                        if(arrayOfCount[i].includes("U") && document.getElementById('approvedUnpaidCount') != null){
+                            document.getElementById("approvedUnpaidCount").innerHTML = arrayOfCount[i].match(/\d+/);
+                        }
+                         if(arrayOfCount[i].includes("F") && document.getElementById('approvedPaidCount') != null){
+                            document.getElementById("approvedPaidCount").innerHTML = arrayOfCount[i].match(/\d+/);
+                        }
+                         if(arrayOfCount[i].includes("R") && document.getElementById('sendBackCount') != null){
+                            document.getElementById("sendBackCount").innerHTML = arrayOfCount[i].match(/\d+/);
+                        }
+
+                     }
+
+                }
+
+                 requestRunning = false;
+             } else {
+                 requestRunning = false;
+             }
+         },
+         error: function(data) {
+             requestRunning = false;
+         }
+     });
+
+ }
 
 function returnUnitResult() {
     var perUnitStatus = perUnitDetailsJSON.expRatePerUnit;
@@ -4066,13 +4126,13 @@ function setTSEntitlementExceedMessage(returnJsonData, jsonTSArr, tsExpDetailsAr
     var msg = returnJsonData.Message + "This voucher has exceeded Entitlements. Do you want to proceed?";
     var IsEntitlementExceed = confirm(msg);
     if (IsEntitlementExceed == true) {
-        onConfirm(IsEntitlementExceed, msg, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails);
+        onConfirmTS(IsEntitlementExceed, msg, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails);
     } else {
         return false;
     }
 }
 
-function onConfirm(IsEntitlementExceed, errormsg, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails) {
+function onConfirmTS(IsEntitlementExceed, errormsg, jsonTSArr, tsExpDetailsArr, travelRequestID, trdetails) {
     if (IsEntitlementExceed == true) {
         var entitlementAllowCheck = true;
         j('#loading_Cat').show();
