@@ -617,6 +617,40 @@ function createCurrencyDropDown(jsonCurrencyArr) {
     }).select2("val", jsonArr[0]);
 }
 
+function createCurrencyDropDownForTS(jsonCurrencyArr) {
+    var jsonArr = [];
+    if (jsonCurrencyArr != null && jsonCurrencyArr.length > 0) {
+        for (var i = 0; i < jsonCurrencyArr.length; i++) {
+            var stateArr = new Array();
+            stateArr = jsonCurrencyArr[i];
+
+            jsonArr.push({
+                id: stateArr.Value,
+                name: stateArr.Label
+            });
+        }
+    }
+
+    j("#currency").select2({
+        data: {
+            results: jsonArr,
+            text: 'name'
+        },
+        placeholder: "Currency",
+        minimumResultsForSearch: -1,
+        initSelection: function(element, callback) {
+            callback(jsonArr[0]);
+        },
+        formatResult: function(result) {
+            if (!isJsonString(result.id))
+                result.id = JSON.stringify(result.id);
+            return result.name;
+        }
+    }).select2("val", jsonArr[0]);
+
+    j('#currency').select2('disable');
+}
+
 function createTravelModeDown(jsonTrvlModeArr) {
     var jsonArr = [];
     if (jsonTrvlModeArr != null && jsonTrvlModeArr.length > 0) {

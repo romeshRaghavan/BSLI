@@ -1333,6 +1333,21 @@
      createCurrencyDropDown(jsonCurrencyArr)
  }
 
+ function getCurrencyListForTS(transaction, results) {
+     var i;
+     var jsonCurrencyArr = [];
+
+     for (i = 0; i < results.rows.length; i++) {
+         var row = results.rows.item(i);
+         var jsonFindCurrHead = new Object();
+         jsonFindCurrHead["Value"] = row.currencyId;
+         jsonFindCurrHead["Label"] = row.currencyName;
+
+         jsonCurrencyArr.push(jsonFindCurrHead);
+     }
+     createCurrencyDropDownForTS(jsonCurrencyArr)
+ }
+
  function onloadTravelData() {
      if (mydb) {
          mydb.transaction(function(t) {
@@ -1699,7 +1714,7 @@
              t.executeSql("SELECT * FROM cityTownMst", [], fetchCityTownList);
              t.executeSql("SELECT * FROM travelRequestDetails", [], fetchTravelRequestNumberList);
              t.executeSql("SELECT * FROM travelExpenseNameMst", [], fetchTravelExpeseName);
-             t.executeSql("SELECT * FROM currencyMst", [], getCurrencyList);
+             t.executeSql("SELECT * FROM currencyMst", [], getCurrencyListForTS);
              t.executeSql("SELECT * FROM travelAccountHeadMst where processId = 3", [], getTsAccHeadList);
          });
      } else {
@@ -4127,6 +4142,8 @@
              return result.name;
          }
      }).select2("val", "");
+
+     j('#currency').select2('disable');
  }
 
  function getExpNameListForBEEdit(transaction, results) {
