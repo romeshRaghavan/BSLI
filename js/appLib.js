@@ -278,6 +278,8 @@
                      document.getElementById("syncSuccessMsg").innerHTML = "Expenses added successfully.";
                      j('#syncSuccessMsg').hide().fadeIn('slow').delay(300).fadeOut('slow');
                      resetImageData();
+                     $('#expDate').datepicker('destroy');
+                     delayMstForBE();
                      //createBusinessExp();
                  } else {
                    viewBusinessExp();
@@ -324,6 +326,9 @@
          var vendor_name = document.getElementById('vendorName').value;
          var invoice_no = document.getElementById('invoiceNo').value;
          var travelRequestId;
+         var travelRequestNo;
+         var accHead_id;
+         var accHeadName;
          var acc_head_val;
          var exp_name_id;
          var exp_name_val;
@@ -341,6 +346,13 @@
              travelRequestNo = j("#travelRequestName").select2('data').name;
          } else {
              travelRequestId = '-1';
+         }
+
+         if (j("#tsAccountHead").select2('data') != null) {
+             accHead_id = j("#tsAccountHead").select2('data').id;
+             accHeadName = j("#tsAccountHead").select2('data').name;
+         } else {
+             accHead_id = '-1';
          }
 
          if (j("#travelExpenseName").select2('data') != null) {
@@ -391,14 +403,14 @@
              alert("trdetails::"+trdetails);
          }*/
 
-         if (validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no)) {
+         if (validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestNo, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no, accHead_id)) {
              j('#loading_Cat').show();
 
              if (file == undefined) {
                  file = "";
              }
              mydb.transaction(function(t) {
-                 t.executeSql("INSERT INTO travelSettleExpDetails  (expDate, travelRequestId,expNameId,expNarration, expUnit,expAmt,currencyId,travelModeId,travelCategoryId,cityTownId,tsExpAttachment,paidBy,vendorName,invoiceNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, travelRequestId, exp_name_id, exp_narration, exp_unit, exp_amt, currency_id, travelMode_id, travelCategory_id, cityTown_id, file, paid_by, vendor_name, invoice_no]);
+                 t.executeSql("INSERT INTO travelSettleExpDetails  (expDate, travelRequestId,expNameId,expNarration, expUnit,expAmt,currencyId,travelModeId,travelCategoryId,cityTownId,tsExpAttachment,paidBy,vendorName,invoiceNo,accHeadId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_date, travelRequestId, exp_name_id, exp_narration, exp_unit, exp_amt, currency_id, travelMode_id, travelCategory_id, cityTown_id, file, paid_by, vendor_name, invoice_no, accHead_id]);
 
                  if (status == "0") {
                      document.getElementById('expDate').value = "";
@@ -408,7 +420,9 @@
                      document.getElementById('paidByValue').value = "";
                      document.getElementById('vendorName').value = "";
                      document.getElementById('invoiceNo').value = "";
+                     document.getElementById('tsDate').style.display = "block";
                      j('#travelRequestName').select2('data', '');
+                     j('#tsAccountHead').select2('data', '');
                      j('#travelExpenseName').select2('data', '');
                      j('#travelModeForTS').select2('data', '');
                      j('#travelCategoryForTS').select2('data', '');
@@ -766,6 +780,9 @@
                          j('<td></td>').attr({
                              class: ["invoiceNo", "displayNone"].join(' ')
                          }).text(row.invoiceNo).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["accHeadId", "displayNone"].join(' ')
+                         }).text(row.accHeadId).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -1232,6 +1249,7 @@
  }
 
  function onloadExpense() {
+
      if (mydb) {
          mydb.transaction(function(t) {
              t.executeSql("SELECT * FROM accountHeadMst", [], getAccHeadList);
@@ -1267,6 +1285,19 @@
          jsonAccHeadArr.push(jsonFindAccHead);
      }
      createTRAccHeadDropDown(jsonAccHeadArr);
+ }
+
+ function getTsAccHeadList(transaction, results) {
+     var i;
+     var jsonAccHeadArr = [];
+     for (i = 0; i < results.rows.length; i++) {
+         var row = results.rows.item(i);
+         var jsonFindAccHead = new Object();
+         jsonFindAccHead["Label"] = row.accHeadId;
+         jsonFindAccHead["Value"] = row.accHeadName;
+         jsonAccHeadArr.push(jsonFindAccHead);
+     }
+     createTSAccHeadDropDown(jsonAccHeadArr);
  }
 
  function getExpNameList(transaction, results) {
@@ -1634,6 +1665,7 @@
  }
 
  function getStartEndDatefromDBTravel(travelRequestId) {
+
      if (mydb) {
          //Get all the employeeDetails from the database with a select statement, set outputEmployeeDetails as the callback function for the executeSql command
          mydb.transaction(function(t) {
@@ -1665,6 +1697,7 @@
              t.executeSql("SELECT * FROM travelRequestDetails", [], fetchTravelRequestNumberList);
              t.executeSql("SELECT * FROM travelExpenseNameMst", [], fetchTravelExpeseName);
              t.executeSql("SELECT * FROM currencyMst", [], getCurrencyList);
+             t.executeSql("SELECT * FROM travelAccountHeadMst where processId = 3", [], getTsAccHeadList);
          });
      } else {
          alert(window.lang.translate('Database not found, your browser does not support web sql!'));
@@ -1725,7 +1758,7 @@
          if (DomOrInter == 'D') {
              j('#currency').select2('disable');
          } else {
-             j('#currency').select2('enable');
+             j('#currency').select2('disable');
              if (mydb) {
                  mydb.transaction(function(t) {
                      t.executeSql("SELECT * FROM currencyMst", [], getCurrencyList);
@@ -2876,6 +2909,9 @@
                          j('<td></td>').attr({
                              class: ["invoiceNo", "displayNone"].join(' ')
                          }).text(row.invoiceNo).appendTo(rowss);
+                         j('<td></td>').attr({
+                             class: ["accHeadId", "displayNone"].join(' ')
+                         }).text(row.accHeadId).appendTo(rowss);
                      }
 
                      j("#source tr").click(function() {
@@ -4341,6 +4377,7 @@
  // *********************************  Travel Last Min Trip Validation -- Start ******************************************//
 
  function checkLastMinTrip() {
+   alert("jjj");
      var current_Date = new Date();
      current_Date.setHours(0, 0, 0, 0);
 
@@ -4417,6 +4454,7 @@
  // *********************************  Travel Date For Overlap Validation -- Start ******************************************//
 
  function validateDateForOverlapTravel() {
+  alert("reru");
      var tvl_date = document.getElementById('selectDate_One').value;
      var tvl__round_dateOne = document.getElementById('selectDate_Two').value;
      var tvl__round_dateTwo = document.getElementById('selectDate_Three').value;
@@ -4600,10 +4638,12 @@
      var cityTownID;
      var cityTownName;
      var travelReqID;
+     var travelReqName;
      var travelExpenseReqName;
 
      if (j("#travelRequestName").select2('data') != null) {
          travelReqID = j("#travelRequestName").select2('data').id;
+         travelReqName = j("#travelRequestName").select2('data').name;
      }
      if (j("#travelModeForTS").select2('data') != null) {
          travelModeID = j("#travelModeForTS").select2('data').id;
@@ -4646,14 +4686,14 @@
         return false;
       }
 
-     if (travelReqID != 'undefined' && travelReqID != '-1') {
+     if (travelReqName != '') {
          getDomCityTownTypeId(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName,noOfUnit);
         // getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName);
      }
  }
 
  function getExpenseIdForTravelFromDB(travelReqID, travelModeID, travelCategoryID, cityTownID, travelExpenseReqID, cityTownName, travelExpenseReqName,noOfUnit,domesticCityTownId) {
-
+     alert("travelExpenseReqID::"+travelExpenseReqID);
      if (mydb) {
          mydb.transaction(function(t) {
              t.executeSql("SELECT expenseNameId FROM travelExpenseNameMst where id=" + travelExpenseReqID, [],
@@ -4713,7 +4753,7 @@
  }
 
  function validateValuesForEntitlement(travelReqID, cityTownID, travelExpenseReqID) {
-     if (travelReqID != "-1" && cityTownID != "-1" && travelExpenseReqID != "-1") {
+     if (travelReqID != "" && cityTownID != "-1" && travelExpenseReqID != "-1") {
          return true;
      } else {
          return false;
@@ -5174,6 +5214,269 @@ function validateTravelRequest() {
  function resetAmount(){
    document.getElementById('expAmt').value ="";
  }
+
+ function getAccountHeadNamesOnRequestNoChange() {
+
+  var travelRequestId = j("#travelRequestName").select2('data').id;
+  getAccountHeadNamesfromDBTravel(travelRequestId);
+}
+
+function getAccountHeadNamesfromDBTravel(travelRequestId) {
+
+ if (mydb) {
+         //Get all the employeeDetails from the database with a select statement, set outputEmployeeDetails as the callback function for the executeSql command
+         mydb.transaction(function(t) {
+           t.executeSql("select accountHeadId,travelRequestNo from travelRequestDetails where travelRequestId=" + travelRequestId, [], fetchAccountHeadName);
+           });
+       } else {
+         alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+       }
+     }
+
+function fetchAccountHeadName(transaction, results) {
+     var i;
+     var accId;
+     var travelRequestNo;
+     for (i = 0; i < results.rows.length; i++) {
+         var row = results.rows.item(i);
+         accId = row.accountHeadId;
+         travelRequestNo = row.travelRequestNo;
+     }
+     j("#tsAccountHead").select2("val", accId);
+     if(travelRequestNo.includes("TR-")){
+        j('#tsAccountHead').attr("readonly", true);   
+        document.getElementById('tsDate').style.display = "block";
+        getStartandEndOnRequestNoChange();      
+     }else{
+      j('#tsAccountHead').attr("readonly", false);
+      document.getElementById('tsDate').style.display = "none";
+      $('#expDate').datepicker('destroy');
+            var currMonth;
+            var currDate;
+            var currYear;
+            var date = new Date();
+            currMonth = date.getMonth();
+            currDate = date.getDate();
+            currYear = date.getFullYear();
+            $('#expDate').datepicker({
+                maxDate: new Date(currYear, currMonth, currDate)
+            });
+     }
+ }
+
+ function getTravelExpenseNamesBasedOnAccountHead() {
+  var accountHeadID = j("#tsAccountHead").select2('data').id;
+  getTravelExpenseNamesfromDB(accountHeadID);
+}
+
+function getTravelExpenseNamesfromDB(accountHeadId) {
+     j('#errorMsgArea').children('span').text("");
+     if (mydb) {
+         //Get all the employeeDetails from the database with a select statement, set outputEmployeeDetails as the callback function for the executeSql command
+         mydb.transaction(function(t) {
+             t.executeSql("SELECT * FROM travelExpenseNameMst where accHeadId=" + accountHeadId, [], getTravelSettExpNameList);
+         });
+     } else {
+         alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+     }
+ }
+
+ function getTravelSettExpNameList(transaction, results) {
+     var i;
+     var jsonExpenseNameArr = [];
+     for (i = 0; i < results.rows.length; i++) {
+         var row = results.rows.item(i);
+         var jsonFindTravelType = new Object();
+         jsonFindTravelType["ExpenseNameId"] = row.id;
+         jsonFindTravelType["ExpenseName"] = row.expenseName;
+         jsonExpenseNameArr.push(jsonFindTravelType);
+     }
+     createTravelSettExpenseNameDropDown(jsonExpenseNameArr)
+ }
+
+ function createTravelSettExpenseNameDropDown(jsonExpenseNameArr) {
+    var jsonExpArr = [];
+    if (jsonExpenseNameArr != null && jsonExpenseNameArr.length > 0) {
+        for (var i = 0; i < jsonExpenseNameArr.length; i++) {
+            var stateArr = new Array();
+            stateArr = jsonExpenseNameArr[i];
+            jsonExpArr.push({
+                id: stateArr.ExpenseNameId,
+                name: stateArr.ExpenseName
+            });
+        }
+    }
+
+    j("#travelExpenseName").select2({
+        data: {
+            results: jsonExpArr,
+            text: 'name'
+        },
+        minimumResultsForSearch: -1,
+        formatResult: function(result) {
+            if (!isJsonString(result.id))
+                result.id = JSON.stringify(result.id);
+            return result.name;
+        }
+    });
+}
+
+function validateAccountHeadForTS() {
+     var map = new Map();
+
+     if (j("#source tr.selected").hasClass("selected")) {
+         j("#source tr.selected").each(function(index, row) {
+
+             var currentAccountHeadID = j(this).find('td.accHeadId').text();
+
+             if (map.has(currentAccountHeadID)) {
+                 var value = map.get(currentAccountHeadID);
+
+                 map.set(currentAccountHeadID, currentAccountHeadID);
+             } else {
+                 map.set(currentAccountHeadID, currentAccountHeadID);
+             }
+
+         });
+     }
+     if (map.size == 1) {
+         return true;
+     } else {
+         return false;
+     }
+ }
+
+function delayMstForBE(){
+
+  var processId = '1';
+
+  if (mydb) {
+          mydb.transaction(function(t) {
+           t.executeSql("select * from delayMst where processId=" + processId, [], fetchDelayMstResultForBE);
+           });
+       } else {
+         alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+       }    
+}
+
+function fetchDelayMstResultForBE(transaction, results) {
+    var noOfDaysBE;
+    var restrictionStatus;
+    var status;
+    var i;
+  for (i = 0; i < results.rows.length; i++) {
+     var row = results.rows.item(i);
+     noOfDaysBE = row.noOfDays;
+     restrictionStatus = row.restrictionStatus;
+     status = row.status;
+  }
+
+if(restrictionStatus == 'Y' &&  status == 'Y' && !noOfDaysBE == ''){
+    var currentMonth;
+    var currentDate;
+    var currentYear;
+ $(function() {
+    var date = new Date();
+    currentMonth = date.getMonth();
+    currentDate = date.getDate();
+    currentYear = date.getFullYear();
+  $('#expDate').datepicker({
+    minDate: new Date(currentYear, currentMonth, currentDate-noOfDaysBE),
+    maxDate: new Date(currentYear, currentMonth, currentDate)
+    });
+  });
+currentMonth = currentMonth + 1;
+ if (currentDate < 10) {
+   currentDate = '0' + currentDate
+  }
+ if (currentMonth < 10) {
+   currentMonth = '0' + currentMonth
+ }
+ document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
+
+}else{
+  var currentMonth;
+  var currentDate;
+  var currentYear;
+ $(function() {
+  var date = new Date();
+  currentMonth = date.getMonth();
+  currentDate = date.getDate();
+  currentYear = date.getFullYear();
+  $('#expDate').datepicker({
+    maxDate: new Date(currentYear, currentMonth, currentDate)
+    });
+  });
+currentMonth = currentMonth + 1;
+  if (currentDate < 10) {
+    currentDate = '0' + currentDate
+  }
+  if (currentMonth < 10) {
+    currentMonth = '0' + currentMonth
+  }
+document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
+
+   }
+}
+
+function delayMstForTR(){
+
+  var processId = '3';
+
+  if (mydb) {
+          mydb.transaction(function(t) {
+           t.executeSql("select * from delayMst where processId=" + processId, [], fetchDelayMstResultForTR);
+           });
+       } else {
+         alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+       }
+}
+   
+   function fetchDelayMstResultForTR(transaction, results){
+    var noOfDaysTR;
+    var restrictionStatus;
+    var status;
+    var i;
+  for (i = 0; i < results.rows.length; i++) {
+     var row = results.rows.item(i);
+     noOfDaysTR = row.noOfDays;
+     restrictionStatus = row.restrictionStatus;
+     status = row.status;
+  }
+
+  if(restrictionStatus == 'Y' &&  status == 'Y' && !noOfDaysTR == ''){
+
+  var currentMonth;
+  var currentDate;
+  var currentYear;
+
+  $(function() {
+     var date = new Date();
+     currentMonth = date.getMonth();
+     currentDate = date.getDate();
+     currentYear = date.getFullYear();
+
+     $('#selectDate_One').datepicker('destroy');
+     $('#selectDate_Three').datepicker('destroy');
+     $('#selectDate_Two').datepicker('destroy');
+      alert("kkk");
+     $('#selectDate_One').datepicker({
+      minDate: new Date(currentYear, currentMonth, currentDate+noOfDaysTR),
+      //maxDate: new Date(currentYear, currentMonth, currentDate)
+    });
+
+     $('#selectDate_Three').datepicker({
+      minDate: new Date(currentYear, currentMonth, currentDate+noOfDaysTR),
+      //maxDate: new Date(currentYear, currentMonth, currentDate)
+    });
+
+     $('#selectDate_Two').datepicker({
+      minDate: new Date(currentYear, currentMonth, currentDate+noOfDaysTR),
+     // maxDate: new Date(currentYear, currentMonth, currentDate)
+     });
+    });
+  } 
+}
 
 
  //***************************** BSLI Changes -- End *******************************************************//

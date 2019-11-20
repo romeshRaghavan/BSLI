@@ -415,6 +415,7 @@ function saveTravelSettleExpDetails(jsonTSArr, tsExpDetailsArr) {
 function sendForApprovalBusinessDetails(jsonBEArr, busExpDetailsArr, accountHeadID, month, year) {
     var jsonToSaveBE = new Object();
     jsonToSaveBE["employeeId"] = window.localStorage.getItem("EmployeeId");
+    jsonToSaveBE["gradeId"] = window.localStorage.getItem("GradeID");
     jsonToSaveBE["expenseDetails"] = jsonBEArr;
     jsonToSaveBE["startDate"] = expenseClaimDates.minInStringFormat;
     jsonToSaveBE["endDate"] = expenseClaimDates.maxInStringFormat;
@@ -502,6 +503,32 @@ function createTRAccHeadDropDown(jsonAccHeadArr) {
         }
     }
     j("#trAccountHead").select2({
+        data: {
+            results: jsonArr,
+            text: 'name'
+        },
+        minimumResultsForSearch: -1,
+        formatResult: function(result) {
+            if (!isJsonString(result.id))
+                result.id = JSON.stringify(result.id);
+            return result.name;
+        }
+    });
+}
+
+function createTSAccHeadDropDown(jsonAccHeadArr) {
+    var jsonArr = [];
+    if (jsonAccHeadArr != null && jsonAccHeadArr.length > 0) {
+        for (var i = 0; i < jsonAccHeadArr.length; i++) {
+            var stateArr = new Array();
+            stateArr = jsonAccHeadArr[i];
+            jsonArr.push({
+                id: stateArr.Label,
+                name: stateArr.Value
+            });
+        }
+    }
+    j("#tsAccountHead").select2({
         data: {
             results: jsonArr,
             text: 'name'
@@ -1344,7 +1371,6 @@ function resetRoundTrip() {
 }
 
 function onloadTimePicker() {
-
     if (top.location != location) {
         top.location.href = document.location.href;
     }
@@ -1715,10 +1741,18 @@ function createTravelExpenseNameDropDown(jsonExpenseNameArr) {
     });
 }
 
-function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestId, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no) {
+function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestNo, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no,accHead_id) {
 
-    if (travelRequestId == "-1") {
+    /*if (travelRequestId == "-1") {
         alert(window.lang.translate('Travel Request Number is invalid.'));
+        return false;
+    }*/
+    if (travelRequestNo == "") {
+        alert(window.lang.translate('Travel Request Number is invalid.'));
+        return false;
+    }
+    if (accHead_id == "-1") {
+        alert(window.lang.translate('Account Head is invalid.'));
         return false;
     }
     if (exp_date == "") {
@@ -1838,12 +1872,14 @@ function oprationOnExpenseClaim() {
             });
         } else {
             j('#send').on('click', function(e) {
+                alert("kkk");
                 var jsonExpenseDetailsArr = [];
                 var busExpDetailsArr = [];
                 expenseClaimDates = new Object;
                 if (requestRunning) {
                     return;
                 }
+                alert("jjj");
                 var accountHeadIdToBeSent = ''
                 exceptionMessage = '';
                 if (j("#source tr.selected").hasClass("selected")) {
@@ -2034,6 +2070,7 @@ function oprationOnExpenseClaim() {
 }
 
 function oprationONTravelSettlementExp() {
+
     var headerBackBtn = defaultPagePath + 'backbtnPage.html';
     j('#synchTS').on('click', function(e) {
         var jsonTravelSettlementDetailsArr = [];
@@ -2112,7 +2149,7 @@ function oprationONTravelSettlementExp() {
     });
 
     j('#sendTS').on('click', function(e) {
-
+        exceptionMessage = '';
         var jsonTravelSettlementDetailsArr = [];
         var travelSettleExpDetailsArr = [];
        // minExpenseClaimDate = new Object;
@@ -2145,10 +2182,9 @@ function oprationONTravelSettlementExp() {
                     travelSettlementDates["maxInStringFormat"] = expenseDate;
                 }
             }
-
-            jsonFindTS["expenseDate"] = expenseDate;
-            //get Account Head
+            jsonFindTS["expenseDate"] = expenseDate;//get Account Head
             var currenttravelRequestID = j(this).find('td.travelRequestId').text();
+        if (validateAccountHeadForTS() == true) {
             if (validateTravelRequest() == true) {
                 currenttravelRequestIDToBeSent = currenttravelRequestID
 
@@ -2192,6 +2228,16 @@ function oprationONTravelSettlementExp() {
 
              if (exceptionMessage == '') {
                 exceptionMessage = "Selected expenses should be mapped under Single Travel Request."
+                requestRunning = false;
+                currenttravelRequestIDToBeSent = "";
+                alert(exceptionMessage);
+            }
+
+        }
+    }else{
+             
+             if (exceptionMessage == '') {
+                exceptionMessage = "Selected expenses should be mapped under Single Expense Type/Account Head."
                 requestRunning = false;
                 currenttravelRequestIDToBeSent = "";
                 alert(exceptionMessage);
@@ -3323,6 +3369,7 @@ function sendForApprovalBusinessDetailsWithEa(jsonBEArr, jsonEAArr, busExpDetail
     recoverFromEmp = document.getElementById("recoverFromEmp").value;
 
     jsonToSaveBE["employeeId"] = window.localStorage.getItem("EmployeeId");
+    jsonToSaveBE["gradeId"] = window.localStorage.getItem("GradeID");
     jsonToSaveBE["expenseDetails"] = jsonBEArr;
     jsonToSaveBE["totalAmount"] = totalAmount;
     jsonToSaveBE["unsetAdvAmount"] = unsetAdvAmount;
