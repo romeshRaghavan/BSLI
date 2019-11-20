@@ -4380,7 +4380,6 @@
  // *********************************  Travel Last Min Trip Validation -- Start ******************************************//
 
  function checkLastMinTrip() {
-   alert("jjj");
      var current_Date = new Date();
      current_Date.setHours(0, 0, 0, 0);
 
@@ -4457,7 +4456,6 @@
  // *********************************  Travel Date For Overlap Validation -- Start ******************************************//
 
  function validateDateForOverlapTravel() {
-  alert("reru");
      var tvl_date = document.getElementById('selectDate_One').value;
      var tvl__round_dateOne = document.getElementById('selectDate_Two').value;
      var tvl__round_dateTwo = document.getElementById('selectDate_Three').value;
