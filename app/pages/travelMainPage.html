@@ -299,6 +299,7 @@
                         onloadTravelData();
                         onloadDefaultValue();
                         onloadTimePicker();
+                        onloadDatePicker();
                     </script>
 
                 </div>
@@ -333,7 +334,7 @@
                                         <li>
                                             <input lang="en" placeholder="Travel Mode" id="travelModeForTS" type="hidden" style="width: 49%">
 
-                                            <input lang="en" placeholder="Travel Category" id="travelCategoryForTS" type="hidden" style="width: 49%">
+                                            <input lang="en" placeholder="Travel Category" id="travelCategoryForTS" type="hidden" style="width: 48%">
                                         </li>
                                         <li>
                                             <input lang="en" placeholder="From Location" id="Citytown" type="hidden" style="width: 98%">
@@ -421,7 +422,6 @@
                         j("#Citytown").change(function() {
                             resetAmountAndEntitlementMsg();
                         });
-                        j('#currency').select2('disable');
 
                         function validate() {
                             var field = document.getElementById("expAmt");
