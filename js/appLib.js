@@ -1715,7 +1715,7 @@
              t.executeSql("SELECT * FROM travelRequestDetails", [], fetchTravelRequestNumberList);
              t.executeSql("SELECT * FROM travelExpenseNameMst", [], fetchTravelExpeseName);
              t.executeSql("SELECT * FROM currencyMst", [], getCurrencyListForTS);
-             t.executeSql("SELECT * FROM travelAccountHeadMst where processId = 3", [], getTsAccHeadList);
+             t.executeSql("SELECT * FROM travelAccountHeadMst where processId IN (3,4)", [], getTsAccHeadList);
          });
      } else {
          alert(window.lang.translate('Database not found, your browser does not support web sql!'));
@@ -5261,7 +5261,7 @@ function fetchAccountHeadName(transaction, results) {
          travelRequestNo = row.travelRequestNo;
      }
      j("#tsAccountHead").select2("val", accId);
-     if(travelRequestNo.includes("TR-")){
+     if(travelRequestNo.includes("TR-") || travelRequestNo.includes("TI-")){
         j('#tsAccountHead').attr("readonly", true);   
         document.getElementById('tsDate').style.display = "block";
         getStartandEndOnRequestNoChange();      

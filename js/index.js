@@ -4178,4 +4178,23 @@ function onConfirmTS(IsEntitlementExceed, errormsg, jsonTSArr, tsExpDetailsArr, 
 
 }
 
+function onloadDatePicker(){
+    $('#selectDate_One').datepicker('destroy');
+    $('#selectDate_Three').datepicker('destroy');
+    $('#selectDate_Two').datepicker('destroy');
+    var date = new Date();
+    currentMonth = date.getMonth();
+    currentDate = date.getDate();
+    currentYear = date.getFullYear();
+    $('#selectDate_One').datepicker({
+       minDate: new Date(currentYear, currentMonth, currentDate)
+   });
+    $('#selectDate_Three').datepicker({
+       minDate: new Date(currentYear, currentMonth, currentDate)
+   });
+    $('#selectDate_Two').datepicker({
+       minDate: new Date(currentYear, currentMonth, currentDate)
+   });
+}
+
 // ****************************************** BSLI Changes -- End  *********************************** //
