@@ -4405,7 +4405,7 @@
      // get days
      var days = (current_Date - selected_Date) / (1000 * 60 * 60 * 24);
 
-     getDelayDays(days);
+     getDelayDays(days,selected_Date,current_Date);
 
  }
 
@@ -4418,11 +4418,11 @@
      // get days
      var days = (current_Date - selected_Date) / (1000 * 60 * 60 * 24);
 
-     getDelayDays(days);
+     getDelayDays(days,selected_Date,current_Date);
 
  }
 
- function getDelayDays(days) {
+ function getDelayDays(days,selected_Date,current_Date) {
      var i;
      var noOfDays;
      var daysDiff = days;
@@ -4440,8 +4440,11 @@
 
                              j('#validationMsgBox').show();
                              j('#validationMsgBoxRoundTrip').show();
-
-                             expMsg = "This is last minute trip request! You have crossed the time limit of " + noOfDays + " days for trip request.";
+                             if(selected_Date >= current_Date){
+                               expMsg = "This is last minute trip request! You have crossed the time limit of " + noOfDays + " days for trip request.";
+                             }else{
+                               expMsg = "You selected backdated travel request.";
+                             }
 
                              document.getElementById("delayDaysMsgRoundArea").style.display = "";
                              document.getElementById("delayDaysMsgArea").style.display = "";
