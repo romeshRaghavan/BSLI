@@ -65,7 +65,7 @@
     <gap:plugin name="cordova-plugin-console" source="npm" />
     <gap:plugin name="cordova-plugin-contacts" source="npm" />
     <gap:plugin name="cordova-plugin-device" source="npm" />
-    <gap:plugin name="Cordova-Plugin-FileChooser" source="npm"/>
+    <gap:plugin name="cordova-plugin-filechooser" source="npm" spec="~1.2.0"/>
     <!--<gap:plugin name="cordova-plugin-filepickerio" source="npm" spec="~0.0.9"/> -->
     <!--<gap:plugin name="cordova-plugin-device-motion" source="npm" />-->
     <!--<gap:plugin name="cordova-plugin-device-orientation" source="npm" />-->
