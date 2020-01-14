@@ -4228,7 +4228,7 @@ var fail = function (error) {
     console.log(error);
 }
 
-var options = { "mime": "application/pdf" };
+var options = { "mime": "application/pdf,image/*" };
 
 fileChooser.open(options,success,fail);
 
