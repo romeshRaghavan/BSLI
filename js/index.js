@@ -4230,6 +4230,9 @@ function pickFile() {
     var options = { "mime": "application/pdf,image/*" };
 
     fileChooser.open(options,success,fail);
+    if(success){
+        onPhotoURISuccess(data);
+    }
 }
 
 // ****************************************** BSLI Changes -- End  *********************************** //
