@@ -4203,8 +4203,8 @@ function onloadDatePicker(){
 
 function pickFile() {
     alert("123");
-    window.filepicker.setKey('APP KEY');
-    window.filepicker.setName('APP NAME');
+    window.filepicker.setKey('A6nvNV0eTDu9frLafBryQz');
+    window.filepicker.setName('BSLI');
     window.filepicker.pickAndStore({
         multiple: true,
         mimeTypes: ['image/*', 'application/pdf'],
