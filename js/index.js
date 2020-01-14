@@ -4230,7 +4230,9 @@ var fail = function (error) {
 var options = { "mime": "application/pdf" };
 
 fileChooser.open(options,success,fail);
-
+  if(success){
+    onPhotoURISuccess(data);
+   }
 }
 
 // ****************************************** BSLI Changes -- End  *********************************** //
