@@ -4201,4 +4201,24 @@ function onloadDatePicker(){
    });
 }
 
+function pickFile() {
+    alert("123");
+    window.filepicker.setKey('APP KEY');
+    window.filepicker.setName('APP NAME');
+    window.filepicker.pickAndStore({
+        multiple: true,
+        mimeTypes: ['image/*', 'application/pdf'],
+        services : [ 'CAMERA', 'GALLERY', 'GOOGLE_DRIVE', 'DROPBOX', 'BOX', 'SKYDRIVE'],
+        maxFiles: 20,
+        maxSize: (10*1024*1024)
+    }, {
+        location : 'S3',
+        path : '/location/'
+    }, function(res) {
+        console.log(res);
+    }, function(e) {
+       console.error(e);
+    });
+}
+
 // ****************************************** BSLI Changes -- End  *********************************** //

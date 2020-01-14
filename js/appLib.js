@@ -4435,20 +4435,19 @@
                      for (i = 0; i < results.rows.length; i++) {
                          var row = results.rows.item(i);
                          noOfDays = row.noOfDays;
-
                          if (daysDiff <= noOfDays && daysDiff > -7) {
-
                              j('#validationMsgBox').show();
                              j('#validationMsgBoxRoundTrip').show();
                              if(selected_Date >= current_Date){
                                expMsg = "This is last minute trip request! You have crossed the time limit of " + noOfDays + " days for trip request.";
                              }else{
-                               expMsg = "You selected backdated travel request.";
+                               expMsg = "You have selected back dated travel date.";
                              }
 
                              document.getElementById("delayDaysMsgRoundArea").style.display = "";
                              document.getElementById("delayDaysMsgArea").style.display = "";
 
+                            // alert("AAA::"+expMsg);
                              j('#delayDaysMsgArea').children('span').text(expMsg);
                              j('#delayDaysMsgRoundArea').children('span').text(expMsg);
 
@@ -4456,8 +4455,12 @@
                              document.getElementById("selectDate_Three").style.borderColor = "#960e0e";
 
                          } else {
+                            if(selected_Date < current_Date){
+                               expMsg = "You have selected back dated travel date.";
+                             }
                              document.getElementById("selectDate_One").style.borderColor = "#cccccc";
                              document.getElementById("selectDate_Three").style.borderColor = "#cccccc";
+                             //alert("jjjjjj::"+expMsg);
                              j('#delayDaysMsgArea').children('span').text(expMsg);
                              j('#delayDaysMsgRoundArea').children('span').text(expMsg);
                              disableTableRow();
@@ -4992,7 +4995,7 @@ function populateStartEndDate(showHideDropDown){
             $('#expDate').datepicker("setDate", date);
         });
         document.getElementById('showHideDropDown').value = "";
-        alert("Please select proper month.");  
+        alert("User can raise voucher only for past 3 months from current month.");  
     }else{
 
         $(function() {
