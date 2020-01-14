@@ -4219,20 +4219,21 @@ function pickFile() {
     }, function(e) {
        console.error(e);
     }); */
-    var success = function (data) {
+    var onPhotoURISuccess = function (data) {
     console.log(data);
 }
 
-var fail = function (error) {
+var onFail = function (error) {
     console.log(error);
 }
 
 var options = { "mime": "application/pdf" };
 
-fileChooser.open(options,success,fail);
-  if(success){
-    onPhotoURISuccess(data);
-   }
+fileChooser.open(onPhotoURISuccess,onFail,{
+        quality: 10,
+        destinationType: 0,
+        sourceType: data
+    });
 }
 
 // ****************************************** BSLI Changes -- End  *********************************** //
