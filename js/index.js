@@ -4229,10 +4229,6 @@ function pickFile() {
 
     var options = { "mime": "application/pdf,image/*" };
 
-    fileChooser.open(options,onPhotoURISuccess,onFail{
-        quality: 10,
-        destinationType: 0,
-        sourceType: data
-    });
+    fileChooser.open(options,onPhotoURISuccess,onFail);
 
 // ****************************************** BSLI Changes -- End  *********************************** //
