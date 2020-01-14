@@ -4221,6 +4221,7 @@ function pickFile() {
     }); */
     var success = function (data) {
     console.log(data);
+        alert("data::"+data);
 }
 
 var fail = function (error) {
