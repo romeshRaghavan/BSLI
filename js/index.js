@@ -4206,7 +4206,7 @@ function pickFile() {
     window.filepicker.setName('BSLI');
     window.filepicker.pickAndStore({
         multiple: true,
-        mimeTypes: ['image/*', 'application/pdf'],
+        mimeTypes: ['application/pdf'],
         services : [ 'CAMERA', 'GALLERY'],
         maxFiles: 20,
         maxSize: (10*1024*1024)
