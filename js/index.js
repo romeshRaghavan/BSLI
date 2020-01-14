@@ -4230,7 +4230,7 @@ var fail = function (error) {
 var options = { "mime": "application/pdf" };
 
 fileChooser.open(options,success,fail);
-}
+
 }
 
 // ****************************************** BSLI Changes -- End  *********************************** //
