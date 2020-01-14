@@ -4221,15 +4221,15 @@ function pickFile() {
     }); */
     var success = function (data) {
     console.log(data);
-    }
+}
 
 var fail = function (error) {
     console.log(error);
 }
 
-var options = {"accept":"application/pdf","capture":true};
+var options = { "mime": "application/pdf" };
 
-window.filechooser.open(options,success,fail);
+fileChooser.open(options,success,fail);
 
 }
 
