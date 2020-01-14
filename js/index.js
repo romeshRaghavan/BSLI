@@ -4220,19 +4220,17 @@ function pickFile() {
        console.error(e);
     }); */
     var success = function (data) {
-      console.log(data);
-    }
+    console.log(data);
+}
 
-    var fail = function (error) {
-      console.log(error);
-    }
+var fail = function (error) {
+    console.log(error);
+}
 
-    var options = { "mime": "application/pdf,image/*" };
+var options = { "mime": "application/pdf" };
 
-    fileChooser.open(options,success,fail);
-    if(success){
-        onPhotoURISuccess(data);
-    }
+fileChooser.open(options,success,fail);
+}
 }
 
 // ****************************************** BSLI Changes -- End  *********************************** //
