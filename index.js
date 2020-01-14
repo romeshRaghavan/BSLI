@@ -2,7 +2,7 @@ var j = jQuery.noConflict();
 var defaultPagePath = 'app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
-var WebServicePath ='http://1.255.255.113:8081/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath ='http://1.255.255.81:8081/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/emailApprovalService.service';
 //var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/emailApprovalService.service';
@@ -4199,6 +4199,26 @@ function onloadDatePicker(){
     $('#selectDate_Two').datepicker({
        minDate: new Date(currentYear, currentMonth, currentDate)
    });
+}
+
+function pickFile() {
+    alert("123");
+    window.filepicker.setKey('APP KEY');
+    window.filepicker.setName('APP NAME');
+    window.filepicker.pickAndStore({
+        multiple: true,
+        mimeTypes: ['image/*', 'application/pdf'],
+        services : [ 'CAMERA', 'GALLERY', 'GOOGLE_DRIVE', 'DROPBOX', 'BOX', 'SKYDRIVE'],
+        maxFiles: 20,
+        maxSize: (10*1024*1024)
+    }, {
+        location : 'S3',
+        path : '/location/'
+    }, function(res) {
+        console.log(res);
+    }, function(e) {
+       console.error(e);
+    });
 }
 
 // ****************************************** BSLI Changes -- End  *********************************** //
