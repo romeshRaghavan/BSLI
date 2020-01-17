@@ -4201,35 +4201,4 @@ function onloadDatePicker(){
    });
 }
 
-function pickFile() {
-    /* window.filepicker.setKey('A6nvNV0eTDu9frLafBryQz');
-    window.filepicker.setName('BSLI');
-    window.filepicker.pickAndStore({
-        multiple: true,
-        mimeTypes: ['application/pdf'],
-        services : [ 'CAMERA', 'GALLERY'],
-        maxFiles: 20,
-        maxSize: (10*1024*1024)
-    }, {
-        location : 'S3',
-        path : '/location/'
-    }, function(res) {
-        alert("123::"+res);
-        console.log(res);
-    }, function(e) {
-       console.error(e);
-    }); */
-    var success = function (data) {
-    console.log(data);
-}
-
-var fail = function (error) {
-    console.log(error);
-}
-
-var options = { "mime": "application/pdf" };
-
-fileChooser.open(options,success,fail);
-}
-
 // ****************************************** BSLI Changes -- End  *********************************** //

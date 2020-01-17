@@ -4969,11 +4969,13 @@ function populateStartEndDate(showHideDropDown){
     var currentYear = today.getFullYear();
     var currentMonthArray;
     if(currentMonth == 1){
-        currentMonthArray=[1,12,11];
+      currentMonthArray=[1,12,11,10];
     }else if(currentMonth == 2){
-        currentMonthArray=[2,1,12];
+      currentMonthArray=[2,1,12,11];
+    }else if(currentMonth == 3){
+      currentMonthArray=[3,2,1,12];
     }else{
-        currentMonthArray=[(currentMonth-0),(currentMonth-1),(currentMonth-2)];
+      currentMonthArray=[(currentMonth-0),(currentMonth-1),(currentMonth-2),(currentMonth-3)];
     }
     
     var flag=currentMonthArray.includes(selectedMonthNumber);
