@@ -5386,64 +5386,74 @@ function delayMstForBE(){
 }
 
 function fetchDelayMstResultForBE(transaction, results) {
-    var noOfDaysBE;
-    var restrictionStatus;
-    var status;
-    var i;
+  var noOfDaysBE;
+  var restrictionStatus;
+  var status;
+  var i;
   for (i = 0; i < results.rows.length; i++) {
-     var row = results.rows.item(i);
-     noOfDaysBE = row.noOfDays;
-     restrictionStatus = row.restrictionStatus;
-     status = row.status;
-  }
+   var row = results.rows.item(i);
+   noOfDaysBE = row.noOfDays;
+   restrictionStatus = row.restrictionStatus;
+   status = row.status;
+ }
 
-if(restrictionStatus == 'Y' &&  status == 'Y' && !noOfDaysBE == ''){
-    var currentMonth;
-    var currentDate;
-    var currentYear;
- $(function() {
+ if(restrictionStatus == 'Y' &&  status == 'Y' && !noOfDaysBE == ''){
+  var currentMonth;
+  var currentDate;
+  var currentYear;
+  $(function() {
     var date = new Date();
     currentMonth = date.getMonth();
     currentDate = date.getDate();
     currentYear = date.getFullYear();
-  $('#expDate').datepicker({
-    minDate: new Date(currentYear, currentMonth, currentDate-noOfDaysBE),
-    maxDate: new Date(currentYear, currentMonth, currentDate)
+    $('#expDate').datepicker({
+      minDate: new Date(currentYear, currentMonth, currentDate-noOfDaysBE),
+      maxDate: new Date(currentYear, currentMonth, currentDate)
     });
   });
-currentMonth = currentMonth + 1;
- if (currentDate < 10) {
-   currentDate = '0' + currentDate
-  }
- if (currentMonth < 10) {
-   currentMonth = '0' + currentMonth
- }
- document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
+  var expdate = document.getElementById("expDate").value;
+  if(expdate == ""){
+    currentMonth = currentMonth + 1;
+    if (currentDate < 10) {
+     currentDate = '0' + currentDate
+   }
+   if (currentMonth < 10) {
+     currentMonth = '0' + currentMonth
+   }
+   document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
+ }else{
+  document.getElementById("expDate").value = expdate;
+}
 
 }else{
   var currentMonth;
   var currentDate;
   var currentYear;
- $(function() {
-  var date = new Date();
-  currentMonth = date.getMonth();
-  currentDate = date.getDate();
-  currentYear = date.getFullYear();
-  $('#expDate').datepicker({
-    maxDate: new Date(currentYear, currentMonth, currentDate)
+  $(function() {
+    var date = new Date();
+    currentMonth = date.getMonth();
+    currentDate = date.getDate();
+    currentYear = date.getFullYear();
+    $('#expDate').datepicker({
+      maxDate: new Date(currentYear, currentMonth, currentDate)
     });
   });
-currentMonth = currentMonth + 1;
-  if (currentDate < 10) {
-    currentDate = '0' + currentDate
-  }
-  if (currentMonth < 10) {
-    currentMonth = '0' + currentMonth
-  }
-document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
-
+  var expdate = document.getElementById("expDate").value;
+  if(expdate == ""){
+    currentMonth = currentMonth + 1;
+    if (currentDate < 10) {
+     currentDate = '0' + currentDate
    }
+   if (currentMonth < 10) {
+     currentMonth = '0' + currentMonth
+   }
+   document.getElementById("expDate").value = currentMonth + "/" + currentDate + "/" + currentYear;
+ }else{
+  document.getElementById("expDate").value = expdate;
+   }
+  }
 }
+
 
 function delayMstForTR(){
 
@@ -6118,6 +6128,41 @@ function rejectVoucher(){
             j('#loading_Cat').hide();
             successMessage = "Error: Oops something is wrong, Please Contact System Administer";
             requestRunning = false;
+         }
+     });
+
+ }
+
+ function fetchReceipt(attachFileId) {
+
+     var jsonToBeSendForApproval = new Object();
+     jsonToBeSendForApproval["fileId"] = attachFileId;
+
+     j.ajax({
+         url: window.localStorage.getItem("urlPath") + "FetchAttachment",
+         type: 'POST',
+         dataType: 'json',
+         crossDomain: true,
+         data: JSON.stringify(jsonToBeSendForApproval),
+         success: function(data) {
+             if (data.Status == "Success") {
+
+                 var attachmentData = data.attachmentData;
+
+                 if (document.getElementById("img01") != null) {
+                     document.getElementById("img01").src = "data:image/png;base64," + attachmentData;
+                 }
+
+                 var modal = document.getElementById("myModalImg");
+                 modal.style.display = "block";
+
+                 requestRunning = false;
+             } else {
+                 requestRunning = false;
+             }
+         },
+         error: function(data) {
+             requestRunning = false;
          }
      });
 
