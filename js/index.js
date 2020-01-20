@@ -4210,7 +4210,7 @@ var options = { "mime": "application/pdf" };
 fileChooser.open(options,success,fail);
 
 var success = function (data) {
-    console.log(data);
+    alert("data "+data);
      fileTempGalleryBE = data;
 }
 
