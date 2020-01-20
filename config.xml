@@ -35,9 +35,6 @@
     <feature name="http://api.phonegap.com/1.0/media"/>
     <feature name="http://api.phonegap.com/1.0/network"/>
     
-    
-     
-    
     <!--<gap:plugin name="cordova-plugin-battery-status" source="npm" />
     <gap:plugin name="cordova-plugin-camera" source="npm" />
     <gap:plugin name="cordova-plugin-media-capture" source="npm" />
@@ -68,7 +65,8 @@
     <gap:plugin name="cordova-plugin-console" source="npm" />
     <gap:plugin name="cordova-plugin-contacts" source="npm" />
     <gap:plugin name="cordova-plugin-device" source="npm" />
-    <gap:plugin name="Cordova-Plugin-FileChooser" source="npm"/>
+     <gap:plugin name="Cordova-Plugin-FileChooser" source="npm"/>
+   <!--  <gap:plugin name="cordova-plugin-filepickerio" source="npm" spec="~0.0.9"/> -->
     <!--<gap:plugin name="cordova-plugin-device-motion" source="npm" />-->
     <!--<gap:plugin name="cordova-plugin-device-orientation" source="npm" />-->
     <gap:plugin name="cordova-plugin-dialogs" source="npm" />
