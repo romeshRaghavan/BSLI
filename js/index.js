@@ -4205,17 +4205,23 @@ function onloadDatePicker(){
 
 function pickFile() {
 
-var options = { "mime": "application/pdf" };
-
-fileChooser.open(options,success,fail);
-
-var success = function (data) {
-    alert("data "+data);
-     fileTempGalleryBE = data;
+    try{
+         var success = function (data) {
+        alert(data);
+        fileTempGalleryBE = data;
 }
 
 var fail = function (error) {
     console.log(error);
 }
 
+var options = { "mime": "application/pdf" };
+
+fileChooser.open(options,success,fail);
+
+    }catch(e){
+        alert("Exception : "+e);
+    }
+   
 }
+
