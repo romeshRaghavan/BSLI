@@ -85,6 +85,14 @@
     <!-- <plugin name="File" value="CDVFile" />-->
     <!-- <plugin name="FileTransfer" value="CDVFileTransfer" />
     icon src="/icon.png" gap:role="default"/> -->
+            <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="RadaeePDFPlugin" >
+                <param name="android-package" value="com.radaee.cordova.RadaeePDFPlugin"/>
+				<param name="onload" value="true" />
+            </feature>
+        </config-file>
+    
+     <source-file src="src/android/RadaeePDFPlugin.java" target-dir="src/com/radaee/cordova" />
     
     <icon src="icon.png" />
     <!--<icon gap:platform="android" gap:qualifier="ldpi" src="www/res/icon/android/icon-36-ldpi.png" />
