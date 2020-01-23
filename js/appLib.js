@@ -4447,7 +4447,6 @@
                              document.getElementById("delayDaysMsgRoundArea").style.display = "";
                              document.getElementById("delayDaysMsgArea").style.display = "";
 
-                            // alert("AAA::"+expMsg);
                              j('#delayDaysMsgArea').children('span').text(expMsg);
                              j('#delayDaysMsgRoundArea').children('span').text(expMsg);
 
@@ -4460,10 +4459,14 @@
                              }
                              document.getElementById("selectDate_One").style.borderColor = "#cccccc";
                              document.getElementById("selectDate_Three").style.borderColor = "#cccccc";
-                             //alert("jjjjjj::"+expMsg);
+                             
                              j('#delayDaysMsgArea').children('span').text(expMsg);
                              j('#delayDaysMsgRoundArea').children('span').text(expMsg);
                              disableTableRow();
+                             if(expMsg != ""){
+                                document.getElementById("validationMsgBox").style.display = "block";
+                                document.getElementById("delayDaysMsgArea").style.display = "block";
+                             }
                          }
 
                      }
