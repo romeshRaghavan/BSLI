@@ -1192,17 +1192,3 @@ div.image {
     color: #960e0e;
     font-weight: 500;
 }
-
-.close-img {
-    background-color: transparent;
-    color: #FFFFFF;
-    line-height: 25px;
-    position: absolute;
-    right: -12px;
-    text-align: center;
-    top: -10px;
-    text-decoration: none;
-    font-weight: bold;
-    border: none;
-
-}
