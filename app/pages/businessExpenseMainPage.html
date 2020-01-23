@@ -129,7 +129,6 @@
                                                 <ul>
                                                     <img src="images/camera.png" onclick="capturePhoto(0,'BE');" width="15%" height="15%">
                                                     <img src="images/gallery.png" onclick="getPhoto(pictureSource.PHOTOLIBRARY,0,'BE');" width="15%" height="15%">
-                                                                                                        
                                                     <a id="mapLink" href="#openModal" style="" onclick="viewMap();">
                                                         <img src="images/google_map_icon.jpg" width="10%" height="10%" onload="loadImage();" id="mapImage" style="display : none;">
                                                     </a>
@@ -182,7 +181,7 @@
                                 getExpenseNamesBasedOnAccountHead();
                                 document.getElementById('showHideDropDown').value = "";
                                 $('#expDate').datepicker('destroy');
-                               // delayMstForBE();
+                                delayMstForBE();
                             });
                             j("#expenseName").change(function() {
                                 getPerUnitBasedOnExpense();
