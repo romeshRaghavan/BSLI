@@ -9,121 +9,113 @@
         Team Expenzing
     </author> 
     <content src="index.html" />
-    <preference name="permissions" value="none" />
-    <preference name="orientation" value="portrait" />
-    <preference name="target-device" value="universal" />
-    <preference name="fullscreen" value="false" />
-    <preference name="webviewbounce" value="true" />
-    <preference name="prerendered-icon" value="true" />
-    <preference name="stay-in-webview" value="false" />
-    <preference name="ios-statusbarstyle" value="black-opaque" />
-    <preference name="detect-data-types" value="true" />
-    <preference name="exit-on-suspend" value="false" />
-    <preference name="show-splash-screen-spinner" value="true" />
-    <preference name="auto-hide-splash-screen" value="true" />
-    <preference name="disable-cursor" value="false" /> 
-    <preference name="android-minSdkVersion" value="14" />
-    <preference name="android-maxSdkVersion" value="28" />
-    <preference name="android-targetSdkVersion" value="26" />
-    <preference name='phonegap-version' value='cli-7.0.1' />
-    <preference name="android-installLocation" value="auto" />
+        <preference name="permissions" value="none" />
+        <preference name="orientation" value="portrait" />
+        <preference name="target-device" value="universal" />
+        <preference name="fullscreen" value="false" />
+        <preference name="webviewbounce" value="true" />
+        <preference name="prerendered-icon" value="true" />
+        <preference name="stay-in-webview" value="false" />
+        <preference name="ios-statusbarstyle" value="black-opaque" />
+        <preference name="detect-data-types" value="true" />
+        <preference name="exit-on-suspend" value="false" />
+        <preference name="show-splash-screen-spinner" value="true" />
+        <preference name="auto-hide-splash-screen" value="true" />
+        <preference name="disable-cursor" value="false" />
+        <preference name="android-minSdkVersion" value="14" />
+        <preference name="android-maxSdkVersion" value="29" />
+        <preference name="android-targetSdkVersion" value="28" />
+        <preference name='phonegap-version' value='cli-7.1.0' />
+        <preference name="android-installLocation" value="auto" />
+
+        <feature name="http://api.phonegap.com/1.0/device" />
+       
+        <feature name="http://api.phonegap.com/1.0/file" />
+        <feature name="http://api.phonegap.com/1.0/media" />
+        <feature name="http://api.phonegap.com/1.0/network" />
+
    
+        <gap:plugin name="cordova-plugin-battery-status" source="npm" />
+        <gap:plugin name="cordova-plugin-compat" source="npm" spec="~1.2.0" />
 
-     <feature name="http://api.phonegap.com/1.0/device" />
-    <!-- <feature name="http://api.phonegap.com/1.0/camera"/> -->
-    <feature name="http://api.phonegap.com/1.0/file"/>
-    <feature name="http://api.phonegap.com/1.0/media"/>
-    <feature name="http://api.phonegap.com/1.0/network"/>
+        <gap:plugin name="cordova-plugin-camera" source="npm" spec="~2.3.0" />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="App requires access to the camera" />
+        <variable name="NSPHOTOLIBRARYUSAGEDESCRIPTIONENTRY" value="App requires access to the photo library" />
+        <variable name="NSPhotoLibraryUsageDescription" value="App requires access to the photo library" />
+        <variable name="NSLocationAlwaysUsageDescription" value="App requires access to the photo library" />
+        <variable name=" NSLocationWhenInUseUsageDescription" value="App requires access to the photo library" />
+        
+<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+    <string>This enables use of camera to attach receipt for expense submission</string>
+    </edit-config>
     
-    <!--<gap:plugin name="cordova-plugin-battery-status" source="npm" />
-    <gap:plugin name="cordova-plugin-camera" source="npm" />
-    <gap:plugin name="cordova-plugin-media-capture" source="npm" />
-    <gap:plugin name="cordova-plugin-console" source="npm" />
+    <edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge">
+    <string>This enables access to gallery to fetches receipt stored for expense </string>
+    </edit-config>
+    
+    <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
+    <string>This enables access to location used while expense submission</string>
+    </edit-config>
+    
+    <edit-config target="NSPhotoLibraryAddUsageDescription" file="*-Info.plist" mode="merge">
+    <string>This enables access to gallery to fetches receipt stored for expense</string>
+    </edit-config>
 
+        <gap:plugin name="cordova-plugin-media-capture" source="npm" />
+        <gap:plugin name="cordova-plugin-console" source="npm" />
+        <gap:plugin name="cordova-plugin-contacts" source="npm" />
+        <gap:plugin name="cordova-plugin-device" source="npm" />
+       
+        <gap:plugin name="cordova-plugin-dialogs" source="npm" />
+        <gap:plugin name="cordova-plugin-file" source="npm" spec="~4.1.1" />
     
-<gap:plugin name="cordova-plugin-contacts" source="npm" />
-    <gap:plugin name="cordova-plugin-device" source="npm" />
-    <gap:plugin name="cordova-plugin-device-motion" source="npm" />
-    <gap:plugin name="cordova-plugin-device-orientation" source="npm" />
-    <gap:plugin name="cordova-plugin-dialogs" source="npm" />
-    <gap:plugin name="cordova-plugin-file" source="npm" />
-    <gap:plugin name="cordova-plugin-file-transfer" source="npm" />
-    <gap:plugin name="cordova-plugin-geolocation" source="npm" />
-    <gap:plugin name="cordova-plugin-globalization" source="npm" />
-    <gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
-    <gap:plugin name="cordova-plugin-media" source="npm" />
-    <gap:plugin name="cordova-plugin-network-information" source="npm" />
-    <gap:plugin name="cordova-plugin-splashscreen" source="npm" />
-    <gap:plugin name="cordova-plugin-vibration" source="npm" />
-    <gap:plugin name="cordova-plugin-imagepicker" source="npm"/> -->
-    
-    
-    <gap:plugin name="cordova-plugin-battery-status" source="npm" />
-    <gap:plugin name="cordova-plugin-compat" source="npm" spec="~1.2.0"/>
-    <gap:plugin name="cordova-plugin-camera" source="npm" spec="~2.3.0"/>
-    <gap:plugin name="cordova-plugin-media-capture" source="npm" />
-    <gap:plugin name="cordova-plugin-console" source="npm" />
-    <gap:plugin name="cordova-plugin-contacts" source="npm" />
-    <gap:plugin name="cordova-plugin-device" source="npm" />
-    <gap:plugin name="cordova-plugin-filepickerio" source="npm" spec="0.0.9"/>
-    <!--<gap:plugin name="cordova-plugin-device-motion" source="npm" />-->
-    <!--<gap:plugin name="cordova-plugin-device-orientation" source="npm" />-->
-    <gap:plugin name="cordova-plugin-dialogs" source="npm" />
-    <gap:plugin name="cordova-plugin-file" source="npm" spec="~4.1.1"/>
-   <!-- <gap:plugin name="cordova-plugin-file-transfer" source="npm" spec="~1.5.0"/>-->
-    <gap:plugin name="cordova-plugin-geolocation" source="npm" />
-    <gap:plugin name="cordova-plugin-globalization" source="npm" />
-    <gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
-    <gap:plugin name="cordova-plugin-media" source="npm" />
-    <gap:plugin name="cordova-plugin-network-information" source="npm" />
-    <gap:plugin name="cordova-plugin-splashscreen" source="npm" />
-    <gap:plugin name="cordova-plugin-vibration" source="npm" />
-    <gap:plugin name="cordova-plugin-imagepicker" source="npm"/>
-    <!-- <gap:plugin name="io.github.pwlin.cordova.plugins.fileopener2" version="1.0.11" />
-    <gap:plugin name="com.synconset.imagepicker" version="1.0.4" />-->
-    <!-- <plugin name="File" value="CDVFile" />-->
-    <!-- <plugin name="FileTransfer" value="CDVFileTransfer" />
-    icon src="/icon.png" gap:role="default"/> -->
-    
-    <icon src="icon.png" />
-    <!--<icon gap:platform="android" gap:qualifier="ldpi" src="www/res/icon/android/icon-36-ldpi.png" />
-    <icon gap:platform="android" gap:qualifier="mdpi" src="www/res/icon/android/icon-48-mdpi.png" />
-    <icon gap:platform="android" gap:qualifier="hdpi" src="www/res/icon/android/icon-72-hdpi.png" />
-    <icon gap:platform="android" gap:qualifier="xhdpi" src="www/res/icon/android/icon-96-xhdpi.png" />
-    <icon gap:platform="blackberry" src="www/res/icon/blackberry/icon-80.png" />
-    <icon gap:platform="blackberry" gap:state="hover" src="www/res/icon/blackberry/icon-80.png" />-->
-    <icon gap:platform="ios" height="57" src="res/icon/ios/icon-57.png" width="57" />
-    <!--<icon gap:platform="ios" height="72" src="res/icon/ios/icon-72.png" width="72" />-->
-    <icon gap:platform="ios" height="120" src="res/icon/ios/icon-120.png" width="120" />
-    <icon gap:platform="ios" height="76" src="res/icon/ios/icon-76.png" width="76" />
-    <icon gap:platform="ios" height="152" src="res/icon/ios/icon-152.png" width="152" />
-    <icon gap:platform="ios" height="114" src="res/icon/ios/icon-57-2x.png" width="114" />
-    <icon gap:platform="ios" height="144" src="res/icon/ios/icon-72-2x.png" width="144" />
-    <icon gap:platform="ios" height="1024" src="res/icon/ios/icon-1024.png" width="1024" />
-    <gap:splash gap:platform="android" gap:qualifier="port-ldpi" src="www/res/screen/android/screen-ldpi-portrait.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-mdpi" src="www/res/screen/android/screen-mdpi-portrait.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-hdpi" src="www/res/screen/android/screen-hdpi-portrait.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-xhdpi" src="www/res/screen/android/screen-xhdpi-portrait.png" />
-    <gap:splash gap:platform="ios" height="480" src="res/splash/ios/Default.png" width="320" />
-    <gap:splash gap:platform="ios" height="960" src="res/splash/ios/Default2x.png" width="640" />
-    <gap:splash gap:platform="ios" height="1136" src="res/splash/ios/Default-568h@2x.png" width="640" />
-    <gap:splash gap:platform="ios" height="1334" src="res/splash/ios/default-750X1334.png" width="750" />
-    <gap:splash gap:platform="ios" height="2208" src="res/splash/ios/default-1242X2208-3x.png" width="1242" />
-    <plugin name="cordova-plugin-whitelist" version="1" />
-    <access origin="*" />
-    
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-    <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
-    <allow-intent href="geo:*" />
-    <platform name="android">
-        <allow-intent href="market:*" />
-    </platform>
-    <platform name="ios">
-        <allow-intent href="itms:*" />
-        <allow-intent href="itms-apps:*" />
-    </platform>
+        <gap:plugin name="cordova-plugin-geolocation" source="npm" />
+        <gap:plugin name="cordova-plugin-globalization" source="npm" />
+        <gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
+        <gap:plugin name="cordova-plugin-media" source="npm" />
+        <gap:plugin name="cordova-plugin-network-information" source="npm" />
+        <gap:plugin name="cordova-plugin-splashscreen" source="npm" />
+        <gap:plugin name="cordova-plugin-vibration" source="npm" />
+        <gap:plugin name="cordova-plugin-imagepicker" source="npm" />
+       
 
-</widget>
+        <icon src="icon.png" />
+	    
+      <icon src="res/icon/ios/icon-1024.png" width="1024" height="1024" />
+
+        <icon gap:platform="ios" height="57" src="res/icon/ios/icon-57.png" width="57" />
+        <icon gap:platform="ios" height="120" src="res/icon/ios/icon-120.png" width="120" />
+        <icon gap:platform="ios" height="76" src="res/icon/ios/icon-76.png" width="76" />
+        <icon gap:platform="ios" height="152" src="res/icon/ios/icon-152.png" width="152" />
+        <icon gap:platform="ios" height="114" src="res/icon/ios/icon-57-2x.png" width="114" />
+        <icon gap:platform="ios" height="144" src="res/icon/ios/icon-72-2x.png" width="144" />
+        <icon gap:platform="ios" height="1024" src="res/icon/ios/icon-1024.png" width="1024" />
+        <icon gap:platform="ios" height="40" src="res/icon/ios/icon-40.png" width="40" />
+        <gap:splash gap:platform="android" gap:qualifier="port-ldpi" src="www/res/screen/android/screen-ldpi-portrait.png" />
+        <gap:splash gap:platform="android" gap:qualifier="port-mdpi" src="www/res/screen/android/screen-mdpi-portrait.png" />
+        <gap:splash gap:platform="android" gap:qualifier="port-hdpi" src="www/res/screen/android/screen-hdpi-portrait.png" />
+        <gap:splash gap:platform="android" gap:qualifier="port-xhdpi" src="www/res/screen/android/screen-xhdpi-portrait.png" />
+        <gap:splash gap:platform="ios" height="480" src="res/splash/ios/Default.png" width="320" />
+        <gap:splash gap:platform="ios" height="960" src="res/splash/ios/Default2x.png" width="640" />
+        <gap:splash gap:platform="ios" height="1136" src="res/splash/ios/Default-568h@2x.png" width="640" />
+        <gap:splash gap:platform="ios" height="1334" src="res/splash/ios/default-750X1334.png" width="750" />
+        <gap:splash gap:platform="ios" height="2208" src="res/splash/ios/default-1242X2208-3x.png" width="1242" />
+        <plugin name="cordova-plugin-whitelist" version="1" />
+        <access origin="*" />
+
+        <allow-intent href="http://*/*" />
+        <allow-intent href="https://*/*" />
+        <allow-intent href="tel:*" />
+        <allow-intent href="sms:*" />
+        <allow-intent href="mailto:*" />
+        <allow-intent href="geo:*" />
+        <platform name="android">
+            <allow-intent href="market:*" />
+        </platform>
+        <platform name="ios">
+            <allow-intent href="itms:*" />
+            <allow-intent href="itms-apps:*" />
+        </platform>
+
+    </widget>
+
