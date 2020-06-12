@@ -3,7 +3,10 @@ var defaultPagePath = 'app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
 //var WebServicePath ='http://1.255.255.81:8081/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/mobileLinkResolver.service';
+//Below is the bsli uat link for access mobile app.
+//var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/mobileLinkResolver.service';
+//Below is the bsli Production link for access mobile app.
+var WebServicePath = 'https://appservices.expenzing.com/NexstepWebServiceNew/mobileLinkResolver.service';
 //var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/emailApprovalService.service';
 //var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/emailApprovalService.service';
 //var WebServicePath ='http://10.155.10.105/bslitneuat/mobileLinkResolver.service';
