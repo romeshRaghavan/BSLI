@@ -2,17 +2,13 @@ var j = jQuery.noConflict();
 var defaultPagePath = 'app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
-//var WebServicePath ='http://1.255.255.81:8081/NexstepWebService/mobileLinkResolver.service';
 //Below is the bsli uat link for access mobile app.
 //var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/mobileLinkResolver.service';
 //Below is the bsli Production link for access mobile app.
 var WebServicePath = 'https://appservices.expenzing.com/NexstepWebServiceNew/mobileLinkResolver.service';
-//var WebServicePath ='https://appservices.expenzing.com/NexstepWebService/emailApprovalService.service';
-//var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/emailApprovalService.service';
 //var WebServicePath ='http://10.155.10.105/bslitneuat/mobileLinkResolver.service';
 //var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='http://1.255.255.95:8080/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath = 'http://1.255.255.98:8083/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -783,7 +779,8 @@ function createCitytownDropDown(jsonCityTownArr) {
             results: jsonArr,
             text: 'name'
         },
-        minimumResultsForSearch: 2,
+        minimumInputLength: 2,
+        minimumResultsForSearch: -1,
         formatResult: function(result) {
             if (!isJsonString(result.id))
                 result.id = JSON.stringify(result.id);
@@ -796,7 +793,8 @@ function createCitytownDropDown(jsonCityTownArr) {
             results: jsonArr,
             text: 'name'
         },
-        minimumResultsForSearch: 2,
+        minimumInputLength: 2,
+        minimumResultsForSearch: -1,
         formatResult: function(result) {
             if (!isJsonString(result.id))
                 result.id = JSON.stringify(result.id);
@@ -809,7 +807,8 @@ function createCitytownDropDown(jsonCityTownArr) {
             results: jsonArr,
             text: 'name'
         },
-        minimumResultsForSearch: 2,
+        minimumInputLength: 2,
+        minimumResultsForSearch: -1,
         formatResult: function(result) {
             if (!isJsonString(result.id))
                 result.id = JSON.stringify(result.id);
