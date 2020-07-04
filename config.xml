@@ -8,7 +8,7 @@
     <author email="product@expenzing.com" href="http://www.expenzing.com">
         Team Expenzing
     </author> 
-     <content src="index.html" />
+    <content src="index.html" />
         <preference name="permissions" value="none" />
         <preference name="orientation" value="portrait" />
         <preference name="target-device" value="universal" />
@@ -61,8 +61,6 @@
     <string>This enables access to gallery to fetches receipt stored for expense</string>
     </edit-config>
 
-    <plugin name="cordova-plugin-actionsheet" spec="https://github.com/EddyVerbruggen/cordova-plugin-actionsheet.git" />
-
         <gap:plugin name="cordova-plugin-media-capture" source="npm" />
         <gap:plugin name="cordova-plugin-console" source="npm" />
         <gap:plugin name="cordova-plugin-contacts" source="npm" />
@@ -82,7 +80,7 @@
        
 
         <icon src="icon.png" />
-        
+	    
       <icon src="res/icon/ios/icon-1024.png" width="1024" height="1024" />
 
         <icon gap:platform="ios" height="57" src="res/icon/ios/icon-57.png" width="57" />
@@ -120,4 +118,3 @@
         </platform>
 
     </widget>
-
