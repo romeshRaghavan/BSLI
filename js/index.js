@@ -8,7 +8,7 @@ var headerMsg = "Expenzing";
 var WebServicePath = 'https://appservices.expenzing.com/NexstepWebServiceNew/mobileLinkResolver.service';
 //var WebServicePath ='http://10.155.10.105/bslitneuat/mobileLinkResolver.service';
 //var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath ='http://1.255.255.95:8080/NexstepWebService/mobileLinkResolver.service';
+//var WebServicePath ='http://1.255.255.122:8082/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -1586,6 +1586,17 @@ function setModeCategroyDetails(transaction, results) {
         ismodeCategoryJSON = new Object();
         ismodeCategoryJSON["expenseNameId"] = row.expenseNameId;
         ismodeCategoryJSON["isModeCategory"] = row.isModeCategory;
+        var isAttachmentReq = row.isAttachmentRequired;
+       
+        if(isAttachmentReq == 'Y'){
+            document.getElementById("errorMsgAreaForAttachment").style.display="";
+            //j('#errorMsgAreaForAttachment').show();
+        }
+        else{
+           document.getElementById("errorMsgAreaForAttachment").style.display="none";
+           // j('#errorMsgAreaForAttachment').hide();
+        }
+
         if (ismodeCategoryJSON.isModeCategory == 'N') {
             j('#travelModeForTS').select2('data', '');
             j('#travelCategoryForTS').select2('data', '');
@@ -1782,7 +1793,7 @@ function createTravelExpenseNameDropDown(jsonExpenseNameArr) {
     });
 }
 
-function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestNo, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no,accHead_id) {
+function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelRequestNo, exp_name_id, currency_id, travelMode_id, travelCategory_id, cityTown_id, paid_by, vendor_name, invoice_no,accHead_id,file) {
 
     /*if (travelRequestId == "-1") {
         alert(window.lang.translate('Travel Request Number is invalid.'));
@@ -1859,6 +1870,17 @@ function validateTSDetails(exp_date, exp_narration, exp_unit, exp_amt, travelReq
     if (invoice_no == "") {
         alert(window.lang.translate('Invoice Number is invalid'));
         return false;
+    }
+    if(document.getElementById("errorMsgAreaForAttachment")){
+        var isAttachmentMandatory = document.getElementById("errorMsgAreaForAttachment").style.display;
+  
+        if (isAttachmentMandatory != "none") {
+
+            if (file == "" || file == undefined) {
+                alert(window.lang.translate('Attachment is mandatory.'));
+                return false;
+            }
+        }
     }
     return true;
 }
